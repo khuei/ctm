@@ -20,6 +20,9 @@ main(int argc, char *argv[])
 		store_addr(email_addr);
 	} else if (!strcmp(argv[1], "current")) {
 		printf("%s\n", parse_addr());
+	} else {
+		fprintf(stderr, "Error: invalid argument");
+		return -1;
 	}
 
 	return 0;
