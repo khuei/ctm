@@ -11,7 +11,7 @@ main(int argc, char *argv[])
 	curl_global_init(CURL_GLOBAL_SSL);
 
 	if(argc == 1) {
-		fprintf(stderr, "Error: empty command");
+		fprintf(stderr, "Error: empty command\n");
 		return -1;
 	}
 
@@ -19,9 +19,16 @@ main(int argc, char *argv[])
 		const char *email_addr = create_addr();
 		store_addr(email_addr);
 	} else if (!strcmp(argv[1], "current")) {
-		printf("%s\n", parse_addr());
+		const char *current_addr = parse_addr();
+		
+		if (current_addr != NULL) {
+			printf("%s\n", parse_addr());
+		} else {
+			fprintf(stderr, "Error: unable to get current email address\n");
+			return -1;
+		}
 	} else {
-		fprintf(stderr, "Error: invalid argument");
+		fprintf(stderr, "Error: invalid argument\n");
 		return -1;
 	}
 
