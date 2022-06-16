@@ -17,6 +17,7 @@ main(int argc, char *argv[])
 
 	if (!strcmp(argv[1], "create")) {
 		const char *email_addr = create_addr();
+		store_addr(email_addr);
 	}
 
 	return 0;
