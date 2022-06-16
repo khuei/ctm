@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,6 +53,42 @@ store_addr(const char *addr)
 	}
 
 	free(conf_dir);
+}
+
+const char *
+parse_addr(void) {
+	struct stat st = { 0 };
+
+	char *xdg_path = getenv("XDG_CONFIG_HOME");
+	char *conf_dir = (char *)malloc(sizeof(char) * 
+	                 (strlen(xdg_path) + strlen("/ctm/address.log") + 1));
+
+	strcpy(conf_dir, xdg_path);
+	strcat(conf_dir, "/ctm");
+
+	if (stat(conf_dir, &st) == -1) {
+		mkdir(conf_dir, 0700);
+		return NULL;
+	}
+
+	char *log_file = strcat(conf_dir, "/address.log");
+
+	FILE *file = fopen(log_file, "r");
+	char *line = NULL;
+	size_t len = 0;
+
+	if (file != NULL) {
+		getline(&line, &len, file);
+
+		if (line[strlen(line) - 1] == '\n')
+			line[strlen(line) - 1] = '\0';
+
+		fclose(file);
+	}
+
+	free(conf_dir);
+
+	return line;
 }
 
 char **

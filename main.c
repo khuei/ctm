@@ -18,6 +18,8 @@ main(int argc, char *argv[])
 	if (!strcmp(argv[1], "create")) {
 		const char *email_addr = create_addr();
 		store_addr(email_addr);
+	} else if (!strcmp(argv[1], "current")) {
+		printf("%s\n", parse_addr());
 	}
 
 	return 0;
