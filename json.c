@@ -1,9 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 
 #include <curl/curl.h>
-#include <json-c/json.h>
 
 #include "json.h"
 

@@ -4,7 +4,8 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include <json-c/json.h>
+#include <json-c/json_object.h>
+#include <json-c/json_tokener.h>
 
 #include "json.h"
 #include "address.h"
