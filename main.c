@@ -41,12 +41,9 @@ main(int argc, char *argv[])
 		if (mailbox == NULL)
 			return 0;
 
-		for (int i = 1; mailbox != NULL; ++i) {
-			printf("(%d) - [%d] subject: %s | from: %s | %s\n", i,
-			       mailbox->id, mailbox->subject, mailbox->from, mailbox->date);
-
-			mailbox = mailbox->next;
-		}
+		for (int i = 1; mailbox != NULL; mailbox = mailbox->next)
+			printf("[%d] subject: %s | from: %s | %s\n", i,
+			       mailbox->subject, mailbox->from, mailbox->date);
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
 		return -1;
