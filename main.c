@@ -36,10 +36,9 @@ main(int argc, char *argv[])
 			return -1;
 		}
 	} else if (!strcmp(argv[1], "refresh")) {
-		Mail *mailbox = retrieve_mailbox(parse_addr());
-		store_mailbox(mailbox);
+		retrieve_mailbox(parse_addr());
 	} else if (!strcmp(argv[1], "list")) {
-		Mail *mailbox = retrieve_mailbox(parse_addr());
+		Mail *mailbox = parse_mailbox();
 
 		if (mailbox == NULL)
 			return 0;

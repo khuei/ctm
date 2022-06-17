@@ -5,13 +5,14 @@
 
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
+#include <json-c/json_util.h>
 
 #include "json.h"
 #include "mailbox.h"
 
 static void append(Mail **, const int, const char *, const char *, const char *);
 
-Mail *
+void
 retrieve_mailbox(const char *email_addr)
 {
 	Mail *head = NULL;
@@ -46,6 +47,60 @@ retrieve_mailbox(const char *email_addr)
 
 	sprintf(api_url, "%s%s&domain=%s", base_url, name, domain);
 
+	parsed_json mailbox_json = get_parsed_json(api_url);
+	json_object *array = json_tokener_parse(mailbox_json.ptr);
+	int array_len = (int)json_object_array_length(array);
+
+	if (array_len == 0) {
+		printf("Notice: Mailbox is empty\n");
+		return;
+	}
+
+	struct stat st = { 0 };
+
+	char *xdg_path = getenv("XDG_CONFIG_HOME");
+	char *conf_dir = (char *)malloc(sizeof(char) * 
+	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log") + 1));
+
+	strcpy(conf_dir, xdg_path);
+	strcat(conf_dir, "/ctm");
+
+	if (stat(conf_dir, &st) == -1)
+		mkdir(conf_dir, 0700);
+
+	char *log_file = strcat(conf_dir, "/mailbox.log");
+
+	FILE *file = fopen(log_file, "w");
+
+	if (file != NULL) {
+		fprintf(file, "%s\n", json_object_get_string(array));
+		fclose(file);
+	}
+
+	free(conf_dir);
+}
+
+Mail *
+parse_mailbox(void)
+{
+	struct stat st = { 0 };
+
+	char *xdg_path = getenv("XDG_CONFIG_HOME");
+	char *conf_dir = (char *)malloc(sizeof(char) * 
+	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log") + 1));
+
+	strcpy(conf_dir, xdg_path);
+	strcat(conf_dir, "/ctm");
+
+	if (stat(conf_dir, &st) == -1) {
+		mkdir(conf_dir, 0700);
+		free(conf_dir);
+		return NULL;
+	}
+
+	char *log_file = strcat(conf_dir, "/mailbox.log");
+
+	Mail *head = NULL;
 	json_object *array = NULL;
 	json_object *element = NULL;
 	json_object *id = NULL;
@@ -55,14 +110,8 @@ retrieve_mailbox(const char *email_addr)
 	const char *element_str = NULL;
 	int array_len = 0;
 
-	parsed_json mailbox_json = get_parsed_json(api_url);
-	array = json_tokener_parse(mailbox_json.ptr);
+	array = json_object_from_file(log_file);
 	array_len = (int)json_object_array_length(array);
-
-	if (array_len == 0) {
-		printf("Notice: Mailbox is empty\n");
-		return NULL;
-	}
 
 	for (int i = 0; i < array_len; ++i) {
 		element = json_object_array_get_idx(array, i);
@@ -82,36 +131,6 @@ retrieve_mailbox(const char *email_addr)
 	}
 
 	return head;
-}
-
-void
-store_mailbox(Mail *head)
-{
-	struct stat st = { 0 };
-
-	char *xdg_path = getenv("XDG_CONFIG_HOME");
-	char *conf_dir = (char *)malloc(sizeof(char) * 
-	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log") + 1));
-
-	strcpy(conf_dir, xdg_path);
-	strcat(conf_dir, "/ctm");
-
-	if (stat(conf_dir, &st) == -1)
-		mkdir(conf_dir, 0700);
-
-	char *log_file = strcat(conf_dir, "/mailbox.log");
-
-	FILE *file = fopen(log_file, "w");
-
-	if (file != NULL) {
-		for (; head != NULL; head = head->next)
-			fprintf(file, "%d %s %s %s\n", head->id, head->from,
-			        head->subject, head->date);
-
-		fclose(file);
-	}
-
-	free(conf_dir);
 }
 
 void
