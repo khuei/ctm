@@ -17,15 +17,16 @@ main(int argc, char *argv[])
 	}
 
 	if (!strcmp(argv[1], "create")) {
-		const char *email_addr = create_addr();
+		create_addr();
 		
+		const char *email_addr = parse_addr();
+
 		if (email_addr == NULL || !strcmp(email_addr, "(null)")) {
 			fprintf(stderr, "Error: unable to create new email address");
 			return -1;
 		}
 
 		printf("%s\n", email_addr);
-		store_addr(email_addr);
 	} else if (!strcmp(argv[1], "current")) {
 		const char *current_addr = parse_addr();
 		

@@ -12,7 +12,9 @@
 
 char **get_domains(void);
 
-const char *create_addr(void) {
+void
+create_addr(void)
+{
 	char *api_url = "https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1";
 	json_object *array = NULL;
 	json_object *element;
@@ -26,13 +28,6 @@ const char *create_addr(void) {
 
 	free(addr_json.ptr);
 
-	return element_str;
-}
-
-
-void
-store_addr(const char *addr)
-{
 	struct stat st = { 0 };
 
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
@@ -49,12 +44,13 @@ store_addr(const char *addr)
 
 	FILE *file = fopen(log_file, "w");
 	if (file != NULL) {
-		fprintf(file, "%s\n", addr);
+		fprintf(file, "%s\n", element_str);
 		fclose(file);
 	}
 
 	free(conf_dir);
 }
+
 
 const char *
 parse_addr(void) {
