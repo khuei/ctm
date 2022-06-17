@@ -69,6 +69,7 @@ parse_addr(void) {
 
 	if (stat(conf_dir, &st) == -1) {
 		mkdir(conf_dir, 0700);
+		free(conf_dir);
 		return NULL;
 	}
 
