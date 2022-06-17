@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
@@ -81,6 +82,36 @@ retrieve_mailbox(const char *email_addr)
 	}
 
 	return head;
+}
+
+void
+store_mailbox(Mail *head)
+{
+	struct stat st = { 0 };
+
+	char *xdg_path = getenv("XDG_CONFIG_HOME");
+	char *conf_dir = (char *)malloc(sizeof(char) * 
+	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log") + 1));
+
+	strcpy(conf_dir, xdg_path);
+	strcat(conf_dir, "/ctm");
+
+	if (stat(conf_dir, &st) == -1)
+		mkdir(conf_dir, 0700);
+
+	char *log_file = strcat(conf_dir, "/mailbox.log");
+
+	FILE *file = fopen(log_file, "w");
+
+	if (file != NULL) {
+		for (; head != NULL; head = head->next)
+			fprintf(file, "%d %s %s %s\n", head->id, head->from,
+			        head->subject, head->date);
+
+		fclose(file);
+	}
+
+	free(conf_dir);
 }
 
 void

@@ -35,6 +35,9 @@ main(int argc, char *argv[])
 			fprintf(stderr, "Error: unable to get current email address\n");
 			return -1;
 		}
+	} else if (!strcmp(argv[1], "refresh")) {
+		Mail *mailbox = retrieve_mailbox(parse_addr());
+		store_mailbox(mailbox);
 	} else if (!strcmp(argv[1], "list")) {
 		Mail *mailbox = retrieve_mailbox(parse_addr());
 

@@ -9,3 +9,4 @@ typedef struct Mail {
 } Mail;
 
 Mail *retrieve_mailbox(const char *);
+void store_mailbox(Mail *);
