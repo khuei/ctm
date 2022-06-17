@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 
 #include "address.h"
+#include "mailbox.h"
 
 int
 main(int argc, char *argv[])
@@ -33,6 +34,18 @@ main(int argc, char *argv[])
 		} else {
 			fprintf(stderr, "Error: unable to get current email address\n");
 			return -1;
+		}
+	} else if (!strcmp(argv[1], "list")) {
+		Mail *mailbox = retrieve_mailbox(parse_addr());
+
+		if (mailbox == NULL)
+			return 0;
+
+		for (int i = 1; mailbox != NULL; ++i) {
+			printf("(%d) - [%d] subject: %s | from: %s | %s\n", i,
+			       mailbox->id, mailbox->subject, mailbox->from, mailbox->date);
+
+			mailbox = mailbox->next;
 		}
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
