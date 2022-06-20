@@ -77,6 +77,9 @@ retrieve_mailbox(const char *email_addr)
 		fclose(file);
 	}
 
+	json_object_put(array);
+	free(api_url);
+	free(mailbox_json.ptr);
 	free(conf_dir);
 }
 
@@ -126,9 +129,16 @@ parse_mailbox(void)
 		       json_object_get_string(from),
 		       json_object_get_string(subject),
 		       json_object_get_string(date));
-
-		json_object_put(element);
 	}
+
+	json_object_put(element);
+	json_object_put(array);
+	json_object_put(id);
+	json_object_put(from);
+	json_object_put(subject);
+	json_object_put(date);
+	free(log_file);
+	free(conf_dir);
 
 	return head;
 }

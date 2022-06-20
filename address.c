@@ -26,8 +26,6 @@ create_addr(void)
 	element = json_object_array_get_idx(array, 0);
 	element_str = json_object_get_string(element);
 
-	free(addr_json.ptr);
-
 	struct stat st = { 0 };
 
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
@@ -48,6 +46,9 @@ create_addr(void)
 		fclose(file);
 	}
 
+	json_object_put(array);
+	json_object_put(element);
+	free(addr_json.ptr);
 	free(conf_dir);
 }
 
@@ -116,6 +117,8 @@ get_domains(void)
 	domains[array_len + 1] = NULL;
 
 	free(domains_json.ptr);
+	json_object_put(element);
+	json_object_put(array);
 
 	return domains;
 }
