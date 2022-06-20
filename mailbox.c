@@ -8,18 +8,20 @@
 #include <json-c/json_util.h>
 
 #include "json.h"
+#include "address.h"
 #include "mailbox.h"
 
 static void append(Mail **, const int, const char *, const char *, const char *);
 
 void
-retrieve_mailbox(const char *email_addr)
+retrieve_mailbox(void)
 {
 	Mail *head = NULL;
 
 	char *base_url = "https://www.1secmail.com/api/v1/?action=getMessages&login=";
 	char *api_url = NULL;
 
+	const char *email_addr = parse_addr();
 	char name[strlen(email_addr)];
 	char domain[strlen(email_addr)];
 

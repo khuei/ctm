@@ -8,5 +8,5 @@ typedef struct Mail {
 	struct Mail *next;
 } Mail;
 
-void retrieve_mailbox(const char *);
+void retrieve_mailbox(void);
 Mail *parse_mailbox(void);
