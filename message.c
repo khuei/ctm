@@ -86,6 +86,18 @@ parse_message(char *id)
 
 		parsed_json message_json = get_parsed_json(api_url);
 		root = json_tokener_parse(message_json.ptr);
+
+		if (root != NULL) {
+			file = fopen(log_file, "w");
+
+			if (file) {
+				fprintf(file, "%s\n", json_object_get_string(root));
+				fclose(file);
+			}
+		} else {
+			return NULL;
+		}
+
 		free(message_json.ptr);
 	}
 
@@ -107,7 +119,6 @@ parse_message(char *id)
 	date = json_object_object_get(root, "date");
 	attachments = json_object_object_get(root, "attachments");
 	body = json_object_object_get(root, "body");
-
 
 	json_object_put(root);
 	json_object_put(from);
