@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
@@ -50,6 +51,8 @@ main(int argc, char *argv[])
 		for (int i = 1; mailbox != NULL; mailbox = mailbox->next)
 			printf("[%d] subject: %s | from: %s | %s\n", i,
 			       mailbox->subject, mailbox->from, mailbox->date);
+
+		free(mailbox);
 	} else if (!strcmp(argv[1], "view")) {
 		bool is_number = true;
 
@@ -64,6 +67,8 @@ main(int argc, char *argv[])
 		}
 
 		Message *msg = parse_message(argv[2]);
+
+		free(msg);
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
 		return -1;
