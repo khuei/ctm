@@ -47,7 +47,7 @@ retrieve_mailbox(void)
 	api_url = (char *)malloc((strlen(base_url) + strlen(name) + 
 	                          strlen(domain) + strlen("&domain=")) * sizeof(char));
 
-	sprintf(api_url, "%s%s&domain=%s", base_url, name, domain);
+	snprintf(api_url, sizeof(api_url), "%s%s&domain=%s", base_url, name, domain);
 
 	parsed_json mailbox_json = get_parsed_json(api_url);
 	json_object *array = json_tokener_parse(mailbox_json.ptr);
