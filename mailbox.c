@@ -11,7 +11,7 @@
 #include "address.h"
 #include "mailbox.h"
 
-static void append(Mail **, const int, const char *, const char *, const char *);
+static void append(Mail **, const char *, const char *, const char *, const char *);
 
 void
 retrieve_mailbox(void)
@@ -127,7 +127,7 @@ parse_mailbox(void)
 		date = json_object_object_get(element, "date");
 		
 		append(&head,
-		       json_object_get_int(id),
+		       json_object_get_string(id),
 		       json_object_get_string(from),
 		       json_object_get_string(subject),
 		       json_object_get_string(date));
@@ -146,7 +146,7 @@ parse_mailbox(void)
 }
 
 void
-append(Mail **head, const int id, const char *from,
+append(Mail **head, const char *id, const char *from,
        const char *subject, const char *date)
 {
 	Mail *new = (Mail *)malloc(sizeof(Mail));

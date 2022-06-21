@@ -1,7 +1,7 @@
 #pragma once
 
 typedef struct Mail {
-	unsigned int id;
+	const char *id;
 	const char *from;
 	const char *subject;
 	const char *date;
