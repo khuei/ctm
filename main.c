@@ -1,10 +1,13 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
 #include <string.h>
 
 #include <curl/curl.h>
 
 #include "address.h"
 #include "mailbox.h"
+#include "message.h"
 
 int
 main(int argc, char *argv[])
@@ -47,6 +50,20 @@ main(int argc, char *argv[])
 		for (int i = 1; mailbox != NULL; mailbox = mailbox->next)
 			printf("[%d] subject: %s | from: %s | %s\n", i,
 			       mailbox->subject, mailbox->from, mailbox->date);
+	} else if (!strcmp(argv[1], "view")) {
+		bool is_number = true;
+
+		for (int i = 0; argv[2][i] != '\0'; ++i) {
+			if (!isdigit(argv[2][i]))
+				is_number = false;
+		}
+
+		if (!is_number) {
+			fprintf(stderr, "Error: invalid email ID\n");
+			return -1;
+		}
+
+		Message *msg = parse_message(argv[2]);
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
 		return -1;
