@@ -139,7 +139,6 @@ parse_mailbox(void)
 	json_object_put(from);
 	json_object_put(subject);
 	json_object_put(date);
-	free(log_file);
 	free(conf_dir);
 
 	return head;
