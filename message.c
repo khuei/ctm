@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 #include <json-c/json_object.h>
@@ -14,6 +15,10 @@
 Message *
 parse_message(char *id)
 {
+	const char *email_addr = parse_addr();
+	char name[strlen(email_addr)];
+	char domain[strlen(email_addr)];
+
 	struct stat st = { 0 };
 
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
@@ -56,10 +61,6 @@ parse_message(char *id)
 		char *base_url = "https://www.1secmail.com/api/v1/?action=readMessage&login=";
 		char *api_url = NULL;
 
-		const char *email_addr = parse_addr();
-		char name[strlen(email_addr)];
-		char domain[strlen(email_addr)];
-
 		int track_index = 0;
 		int before_atsign = 1;
 
@@ -99,6 +100,7 @@ parse_message(char *id)
 		}
 
 		free(message_json.ptr);
+		free(api_url);
 	}
 
 	from = json_object_object_get(root, "from");
@@ -120,13 +122,45 @@ parse_message(char *id)
 	attachments = json_object_object_get(root, "attachments");
 	body = json_object_object_get(root, "body");
 
+	char *base_attm_url = "https://www.1secmail.com/api/v1/?action=download&login=";
+	char *attm_url = NULL;
+	json_object *attachment = NULL;
+	json_object *filename = NULL;
+	int array_len = (int)json_object_array_length(attachments);
+
+	for (int i = 0; i < array_len; ++i) {
+		attachment = json_object_array_get_idx(attachments, i);
+		filename = json_object_object_get(attachment, "filename");
+
+		attm_url = (char *)malloc((strlen(base_attm_url) + strlen(name) +
+		                          strlen("&domain=") + strlen(domain) +
+		                          strlen("&id=") + strlen(id) +
+		                          strlen("&file=") +
+		                          strlen(json_object_get_string(filename))) * sizeof(char));
+
+		snprintf(attm_url, sizeof(attm_url), "%s%s&domain=%s&id=%s&file=%s",
+		         base_attm_url, name, domain, id, json_object_get_string(filename));
+
+		char current_dir[4096];
+		getcwd(current_dir, sizeof(current_dir));
+
+		chdir(log_dir);
+		get_parsed_json(attm_url);
+
+		chdir(current_dir);
+
+	}
+
 	json_object_put(root);
 	json_object_put(from);
 	json_object_put(subject);
 	json_object_put(date);
 	json_object_put(attachments);
 	json_object_put(body);
+	json_object_put(attachment);
+	json_object_put(filename);
 	free(conf_dir);
+	free(attm_url);
 
 	return msg;
 }
