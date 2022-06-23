@@ -68,6 +68,15 @@ main(int argc, char *argv[])
 
 		Message *msg = parse_message(argv[2]);
 
+		printf("From: %s\n\
+		        Date: %s\n\n\
+		        %s\n\n\
+		        Attachment: ", msg->from, msg->subject, msg->body);
+
+		for (int i = 0; msg->attachments[i] != NULL; ++i)
+			printf("%s ", msg->attachments[i]);
+
+		puts("\n");
 		free(msg);
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");

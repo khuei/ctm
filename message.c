@@ -153,6 +153,8 @@ parse_message(char *id)
 
 		chdir(current_dir);
 	}
+	
+	msg->attachments[array_len] = NULL;
 
 	json_object_put(root);
 	json_object_put(from);
