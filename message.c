@@ -113,7 +113,6 @@ parse_message(char *id)
 	msg->from = json_object_get_string(from);
 	msg->subject = json_object_get_string(subject);
 	msg->date = json_object_get_string(date);
-	msg->attachments = json_object_get_string(attachments);
 	msg->body = json_object_get_string(body);
 
 	from = json_object_object_get(root, "from");
@@ -132,6 +131,11 @@ parse_message(char *id)
 		attachment = json_object_array_get_idx(attachments, i);
 		filename = json_object_object_get(attachment, "filename");
 
+		msg->attachments[i] = realloc(msg->attachments,
+		                              (strlen(json_object_get_string(filename))) *
+		                              sizeof(char));
+		msg->attachments[i] = json_object_get_string(filename);
+
 		attm_url = (char *)malloc((strlen(base_attm_url) + strlen(name) +
 		                          strlen("&domain=") + strlen(domain) +
 		                          strlen("&id=") + strlen(id) +
@@ -148,7 +152,6 @@ parse_message(char *id)
 		get_parsed_json(attm_url);
 
 		chdir(current_dir);
-
 	}
 
 	json_object_put(root);
