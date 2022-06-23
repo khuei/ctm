@@ -6,7 +6,6 @@ typedef struct Message {
 	const char *subject;
 	const char *date;
 	const char *body;
-	struct Message *next;
 	const char *attachments[];
 } Message;
 
