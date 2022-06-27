@@ -86,7 +86,7 @@ parse_message(char *id)
 		api_url = (char *)malloc(sizeof(char) * (strlen(base_url) + strlen(name) + 
 		          strlen(domain) + strlen("&domain=") + strlen("&id=") + strlen(id)));
 
-		snprintf(api_url, sizeof(api_url), "%s%s&domain=%s&id=%s", base_url, name, domain, id);
+		sprintf(api_url, "%s%s&domain=%s&id=%s", base_url, name, domain, id);
 
 		parsed_json message_json = get_parsed_json(api_url);
 		root = json_tokener_parse(message_json.ptr);
@@ -145,8 +145,9 @@ parse_message(char *id)
 		                          strlen("&file=") +
 		                          strlen(json_object_get_string(filename))) * sizeof(char));
 
-		snprintf(attm_url, sizeof(attm_url), "%s%s&domain=%s&id=%s&file=%s",
-		         base_attm_url, name, domain, id, json_object_get_string(filename));
+		sprintf(attm_url, "%s%s&domain=%s&id=%s&file=%s",
+		        base_attm_url, name, domain, id,
+		        json_object_get_string(filename));
 
 		char current_dir[4096];
 		getcwd(current_dir, sizeof(current_dir));
