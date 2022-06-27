@@ -13,7 +13,7 @@
 #include "address.h"
 #include "message.h"
 
-const char *get_filetype(const char *);
+char *get_filetype(const char *);
 
 Message *
 parse_message(char *id)
@@ -128,16 +128,12 @@ parse_message(char *id)
 	char *attm_url = NULL;
 	json_object *attachment = NULL;
 	json_object *filename = NULL;
+	char *filetype = NULL;
 	int array_len = (int)json_object_array_length(attachments);
 
 	for (int i = 0; i < array_len; ++i) {
 		attachment = json_object_array_get_idx(attachments, i);
 		filename = json_object_object_get(attachment, "filename");
-
-		msg->attachments[i] = realloc(msg->attachments,
-		                              (strlen(json_object_get_string(filename))) *
-		                              sizeof(char));
-		msg->attachments[i] = json_object_get_string(filename);
 
 		attm_url = (char *)malloc((strlen(base_attm_url) + strlen(name) +
 		                          strlen("&domain=") + strlen(domain) +
@@ -155,9 +151,24 @@ parse_message(char *id)
 		chdir(log_dir);
 		get_parsed_json(attm_url);
 
+		filetype = get_filetype(json_object_get_string(filename));
+
+		if(strcmp(filetype, "cannot")) {
+			msg->attachments[i] = (char *)malloc((strlen(json_object_get_string(filename)) +
+			                                     strlen(filetype) + strlen(" []")) *
+			                                     sizeof(char));
+
+			sprintf(msg->attachments[i], "%s [%s]", json_object_get_string(filename), filetype);
+		} else {
+			msg->attachments[i] = (char *)malloc(strlen(json_object_get_string(filename)) * 
+			                                     sizeof(char));
+			sprintf(msg->attachments[i], "%s", json_object_get_string(filename));
+		}
+
 		chdir(current_dir);
+
+		free(filetype);
 	}
-	
 	msg->attachments[array_len] = NULL;
 
 	json_object_put(root);
@@ -174,7 +185,7 @@ parse_message(char *id)
 	return msg;
 }
 
-const char *get_filetype(const char *filename) {
+char *get_filetype(const char *filename) {
 	FILE *pf = NULL;
 	char *command = NULL;
 	char *output = NULL;

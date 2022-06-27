@@ -6,7 +6,7 @@ typedef struct Message {
 	const char *subject;
 	const char *date;
 	const char *body;
-	const char *attachments[];
+	char *attachments[];
 } Message;
 
 Message *parse_message(char *);
