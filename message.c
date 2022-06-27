@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +12,8 @@
 #include "json.h"
 #include "address.h"
 #include "message.h"
+
+const char *get_filetype(const char *);
 
 Message *
 parse_message(char *id)
@@ -168,4 +171,35 @@ parse_message(char *id)
 	free(attm_url);
 
 	return msg;
+}
+
+const char *get_filetype(const char *filename) {
+	FILE *pf = NULL;
+	char *command = NULL;
+	char *output = NULL;
+	char data[2048];
+
+	command = (char *)malloc((strlen("file --mimetype ") + strlen(filename) +
+	                         strlen(" | cut -d ' ' -f1")) * sizeof(char));
+
+	sprintf(command, "file --mimetype %s | cut -d ' ' -f2", filename);
+
+	pf = popen(command, "r");
+	free(command);
+
+	if (pf != NULL) {
+		fgets(data, 2048, pf);
+
+		for (int i = 0; i < strlen(data); ++i)
+			if (data[i] == ' ' && data[i + 1] == ' ')
+				data[i] = '\0';
+
+		output = (char *)malloc(strlen(data) * sizeof(char));
+
+		strcpy(output, data);
+
+		pclose(pf);
+	}
+
+	return output;
 }
