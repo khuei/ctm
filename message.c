@@ -149,9 +149,12 @@ parse_message(char *id)
 		getcwd(current_dir, sizeof(current_dir));
 
 		chdir(log_dir);
-		get_parsed_json(attm_url);
+
+		if (stat(json_object_get_string(filename), &st) == 0)
+			get_parsed_json(attm_url);
 
 		filetype = get_filetype(json_object_get_string(filename));
+		chdir(current_dir);
 
 		if(strcmp(filetype, "cannot")) {
 			msg->attachments[i] = (char *)malloc((strlen(json_object_get_string(filename)) +
@@ -164,8 +167,6 @@ parse_message(char *id)
 			                                     sizeof(char));
 			sprintf(msg->attachments[i], "%s", json_object_get_string(filename));
 		}
-
-		chdir(current_dir);
 
 		free(filetype);
 	}
