@@ -12,7 +12,7 @@
 
 char **get_domains(void);
 
-void
+const char *
 create_addr(void)
 {
 	char *api_url = "https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1";
@@ -50,6 +50,8 @@ create_addr(void)
 	json_object_put(element);
 	free(addr_json.ptr);
 	free(conf_dir);
+
+	return element_str;
 }
 
 
