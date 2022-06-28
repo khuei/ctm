@@ -105,6 +105,9 @@ parse_mailbox(void)
 
 	char *log_file = strcat(conf_dir, "/mailbox.log");
 
+	if (stat(log_file, &st) == -1)
+		return NULL;
+
 	Mail *head = NULL;
 	json_object *array = NULL;
 	json_object *element = NULL;
@@ -117,6 +120,8 @@ parse_mailbox(void)
 
 	array = json_object_from_file(log_file);
 	array_len = (int)json_object_array_length(array);
+
+	printf("%d\n", array_len);
 
 	for (int i = 0; i < array_len; ++i) {
 		element = json_object_array_get_idx(array, i);
