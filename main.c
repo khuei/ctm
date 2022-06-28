@@ -21,6 +21,8 @@ main(int argc, char *argv[])
 	}
 
 	if (!strcmp(argv[1], "create")) {
+		clear_log();
+
 		const char *email_addr = create_addr();
 
 		if (email_addr == NULL || !strcmp(email_addr, "(null)")) {

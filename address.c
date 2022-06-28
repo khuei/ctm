@@ -1,7 +1,11 @@
-#define _GNU_SOURCE
+#define _POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE 500
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ftw.h>
+#include <dirent.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 
 #include <json-c/json_object.h>
@@ -123,4 +127,42 @@ get_domains(void)
 	json_object_put(array);
 
 	return domains;
+}
+
+int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
+{
+	return remove(fpath);
+}
+
+int
+clear_log(void)
+{
+	char *xdg_path = getenv("XDG_CONFIG_HOME");
+	char *conf_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) + 1));
+
+	strcpy(conf_dir, xdg_path);
+	strcat(conf_dir, "/ctm");
+
+	char *mailbox_log = (char *)malloc(sizeof(char) *
+	                                   strlen("/mailbox.log") +
+	                                   strlen(conf_dir));
+
+	strcpy(mailbox_log, conf_dir);
+	strcat(mailbox_log, "/mailbox.log");
+	int rm_mailbox = remove(mailbox_log);
+
+	char *msg_log = (char *)malloc(sizeof(char) * strlen(conf_dir) +
+	                               strlen("/message"));
+	strcpy(msg_log, conf_dir);
+	strcat(msg_log, "/message");
+
+	int rm_msg = nftw(msg_log, unlink_cb, 64, FTW_DEPTH |  FTW_PHYS);
+
+	free(conf_dir);
+	free(msg_log);
+
+	if (!rm_mailbox && !rm_msg)
+		return 0;
+	else
+		return -1;
 }
