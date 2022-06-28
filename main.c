@@ -22,7 +22,7 @@ main(int argc, char *argv[])
 
 	if (!strcmp(argv[1], "create")) {
 		create_addr();
-		
+
 		const char *email_addr = parse_addr();
 
 		if (email_addr == NULL || !strcmp(email_addr, "(null)")) {
@@ -34,7 +34,7 @@ main(int argc, char *argv[])
 	} else if (!strcmp(argv[1], "current")) {
 		const char *current_addr = parse_addr();
 		
-		if (current_addr != NULL) {
+		if (current_addr != NULL && strcmp(current_addr, "(null)")) {
 			printf("%s\n", parse_addr());
 		} else {
 			fprintf(stderr, "Error: unable to get current email address\n");
