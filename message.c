@@ -135,11 +135,12 @@ parse_message(char *id)
 		attachment = json_object_array_get_idx(attachments, i);
 		filename = json_object_object_get(attachment, "filename");
 
-		attm_url = (char *)malloc((strlen(base_attm_url) + strlen(name) +
+		attm_url = (char *)malloc(sizeof(char) * 
+		                          (strlen(base_attm_url) + strlen(name) +
 		                          strlen("&domain=") + strlen(domain) +
 		                          strlen("&id=") + strlen(id) +
 		                          strlen("&file=") +
-		                          strlen(json_object_get_string(filename))) * sizeof(char));
+		                          strlen(json_object_get_string(filename))));
 
 		sprintf(attm_url, "%s%s&domain=%s&id=%s&file=%s",
 		        base_attm_url, name, domain, id,
@@ -157,14 +158,14 @@ parse_message(char *id)
 		chdir(current_dir);
 
 		if(strcmp(filetype, "cannot")) {
-			msg->attachments[i] = (char *)malloc((strlen(json_object_get_string(filename)) +
-			                                     strlen(filetype) + strlen(" []")) *
-			                                     sizeof(char));
+			msg->attachments[i] = (char *)malloc(sizeof(char) *
+			                                     (strlen(json_object_get_string(filename)) +
+			                                     strlen(filetype) + strlen(" []")));
 
 			sprintf(msg->attachments[i], "%s [%s]", json_object_get_string(filename), filetype);
 		} else {
-			msg->attachments[i] = (char *)malloc(strlen(json_object_get_string(filename)) * 
-			                                     sizeof(char));
+			msg->attachments[i] = (char *)malloc(sizeof(char) *
+			                                     strlen(json_object_get_string(filename)));
 			sprintf(msg->attachments[i], "%s", json_object_get_string(filename));
 		}
 
@@ -192,8 +193,8 @@ char *get_filetype(const char *filename) {
 	char *output = NULL;
 	char data[2048];
 
-	command = (char *)malloc((strlen("file --mimetype ") + strlen(filename) +
-	                         strlen(" | cut -d ' ' -f1")) * sizeof(char));
+	command = (char *)malloc(sizeof(char) * (strlen("file --mimetype ") +
+	                         strlen(filename) + strlen(" | cut -d ' ' -f1")));
 
 	sprintf(command, "file --mimetype %s | cut -d ' ' -f2", filename);
 
@@ -207,7 +208,7 @@ char *get_filetype(const char *filename) {
 			if (data[i] == ' ' && data[i + 1] == ' ')
 				data[i] = '\0';
 
-		output = (char *)malloc(strlen(data) * sizeof(char));
+		output = (char *)malloc(sizeof(char) * strlen(data));
 
 		strcpy(output, data);
 

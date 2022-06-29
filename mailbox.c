@@ -44,8 +44,8 @@ retrieve_mailbox(void)
 	}
 	domain[track_index] = '\0';
 
-	api_url = (char *)malloc((strlen(base_url) + strlen(name) + 
-	                          strlen(domain) + strlen("&domain=")) * sizeof(char));
+	api_url = (char *)malloc(sizeof(char) * (strlen(base_url) + strlen(name) +
+	                         strlen(domain) + strlen("&domain=")));
 
 	sprintf(api_url, "%s%s&domain=%s", base_url, name, domain);
 
