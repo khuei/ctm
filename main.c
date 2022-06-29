@@ -55,6 +55,9 @@ main(int argc, char *argv[])
 		free(mailbox);
 	} else if (!strcmp(argv[1], "view")) {
 		bool is_number = true;
+		bool is_existed = false;
+		const char *selected_id;
+		Mail *mailbox = parse_mailbox();
 
 		for (int i = 0; argv[2][i] != '\0'; ++i) {
 			if (!isdigit(argv[2][i]))
@@ -62,11 +65,24 @@ main(int argc, char *argv[])
 		}
 
 		if (!is_number) {
-			fprintf(stderr, "Error: invalid email ID\n");
+			fprintf(stderr, "Error: input is not a number\n");
 			return -1;
 		}
 
-		Message *msg = parse_message(argv[2]);
+		for (int i = 1; mailbox != NULL; mailbox = mailbox->next) {
+			if (atoi(argv[2]) == i) {
+				selected_id = mailbox->id;
+				is_existed = true;
+			}
+			++i;
+		}
+
+		if (!is_existed) {
+			fprintf(stderr, "Error: invalid message number\n");
+			return -1;
+		}
+
+		Message *msg = parse_message((char *)selected_id);
 
 		printf("From: %s\n\
 		        Date: %s\n\n\
