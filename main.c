@@ -48,9 +48,11 @@ main(int argc, char *argv[])
 		if (mailbox == NULL)
 			return 0;
 
-		for (int i = 1; mailbox != NULL; mailbox = mailbox->next)
+		for (int i = 1; mailbox != NULL; mailbox = mailbox->next) {
 			printf("[%d | %s] subject: %s | from: %s | %s\n", i,
 			       mailbox->id, mailbox->subject, mailbox->from, mailbox->date);
+			++i;
+		}
 
 		free(mailbox);
 	} else if (!strcmp(argv[1], "view")) {
