@@ -42,11 +42,16 @@ main(int argc, char *argv[])
 		}
 	} else if (!strcmp(argv[1], "refresh")) {
 		retrieve_mailbox();
+		printf("Notice: successfully refresh mailbox");
 	} else if (!strcmp(argv[1], "list")) {
 		Mail *mailbox = parse_mailbox();
 
-		if (mailbox == NULL)
+		if (mailbox == NULL) {
+			printf("Notice: mailbox is empty");
+			retrieve_mailbox();
+			printf("Notice: successfully refresh mailbox");
 			return 0;
+		}
 
 		for (int i = 1; mailbox != NULL; mailbox = mailbox->next) {
 			printf("[%d | %s] subject: %s | from: %s | %s\n", i,
