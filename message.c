@@ -18,10 +18,6 @@ char *get_filetype(const char *);
 Message *
 parse_message(char *id)
 {
-	const char *email_addr = parse_addr();
-	char name[strlen(email_addr)];
-	char domain[strlen(email_addr)];
-
 	struct stat st = { 0 };
 
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
@@ -49,13 +45,12 @@ parse_message(char *id)
 
 	FILE *file = fopen(log_file, "r");
 
-	Message *msg = NULL;
+	Message *msg = (Message *)malloc(sizeof(Message));
 	json_object *root = NULL;
-	json_object *from = NULL;
-	json_object *subject = NULL;
-	json_object *date = NULL;
-	json_object *attachments = NULL;
-	json_object *body = NULL;
+
+	const char *email_addr = parse_addr();
+	char name[strlen(email_addr)];
+	char domain[strlen(email_addr)];
 
 	if (file) {
 		root = json_object_from_file(log_file);
@@ -106,67 +101,57 @@ parse_message(char *id)
 		free(api_url);
 	}
 
-	from = json_object_object_get(root, "from");
-	subject = json_object_object_get(root, "subject");
-	date = json_object_object_get(root, "date");
-	attachments = json_object_object_get(root, "attachments");
-	body = json_object_object_get(root, "body");
-
 	msg->id = id;
-	msg->from = json_object_get_string(from);
-	msg->subject = json_object_get_string(subject);
-	msg->date = json_object_get_string(date);
-	msg->body = json_object_get_string(body);
-
-	from = json_object_object_get(root, "from");
-	subject = json_object_object_get(root, "subject");
-	date = json_object_object_get(root, "date");
-	attachments = json_object_object_get(root, "attachments");
-	body = json_object_object_get(root, "body");
+	msg->from = json_object_get_string(json_object_object_get(root, "from"));
+	msg->subject = json_object_get_string(json_object_object_get(root, "subject"));
+	msg->date = json_object_get_string(json_object_object_get(root, "date"));
+	msg->body = json_object_get_string(json_object_object_get(root, "textBody"));
 
 	char *base_attm_url = "https://www.1secmail.com/api/v1/?action=download&login=";
 	char *attm_url = NULL;
+	json_object *attachments = json_object_object_get(root, "attachments");
 	json_object *attachment = NULL;
-	json_object *filename = NULL;
+	char *filename = NULL;
 	char *filetype = NULL;
 	int array_len = (int)json_object_array_length(attachments);
 
 	for (int i = 0; i < array_len; ++i) {
 		attachment = json_object_array_get_idx(attachments, i);
-		filename = json_object_object_get(attachment, "filename");
+
+		filename = realloc(filename, sizeof(char) * strlen(json_object_get_string(json_object_object_get(attachment, "filename"))));
+		filename = (char *)json_object_get_string(json_object_object_get(attachment, "filename"));
 
 		attm_url = (char *)malloc(sizeof(char) * 
 		                          (strlen(base_attm_url) + strlen(name) +
 		                          strlen("&domain=") + strlen(domain) +
 		                          strlen("&id=") + strlen(id) +
 		                          strlen("&file=") +
-		                          strlen(json_object_get_string(filename))));
+		                          strlen(filename)));
 
 		sprintf(attm_url, "%s%s&domain=%s&id=%s&file=%s",
-		        base_attm_url, name, domain, id,
-		        json_object_get_string(filename));
+		        base_attm_url, name, domain, id, filename);
 
 		char current_dir[4096];
 		getcwd(current_dir, sizeof(current_dir));
 
 		chdir(log_dir);
 
-		if (stat(json_object_get_string(filename), &st) == 0)
+		if (stat(filename, &st) == 0)
 			get_parsed_json(attm_url);
 
-		filetype = get_filetype(json_object_get_string(filename));
+		filetype = get_filetype(filename);
 		chdir(current_dir);
 
 		if(strcmp(filetype, "cannot")) {
 			msg->attachments[i] = (char *)malloc(sizeof(char) *
-			                                     (strlen(json_object_get_string(filename)) +
+			                                     (strlen(filename) +
 			                                     strlen(filetype) + strlen(" []")));
 
-			sprintf(msg->attachments[i], "%s [%s]", json_object_get_string(filename), filetype);
+			sprintf(msg->attachments[i], "%s [%s]", filename, filetype);
 		} else {
 			msg->attachments[i] = (char *)malloc(sizeof(char) *
-			                                     strlen(json_object_get_string(filename)));
-			sprintf(msg->attachments[i], "%s", json_object_get_string(filename));
+			                                     strlen(filename));
+			sprintf(msg->attachments[i], "%s", filename);
 		}
 
 		free(filetype);
@@ -174,13 +159,10 @@ parse_message(char *id)
 	msg->attachments[array_len] = NULL;
 
 	json_object_put(root);
-	json_object_put(from);
-	json_object_put(subject);
-	json_object_put(date);
-	json_object_put(attachments);
-	json_object_put(body);
 	json_object_put(attachment);
-	json_object_put(filename);
+	json_object_put(attachments);
+
+	free(filename);
 	free(conf_dir);
 	free(attm_url);
 

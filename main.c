@@ -91,15 +91,16 @@ main(int argc, char *argv[])
 
 		Message *msg = parse_message((char *)selected_id);
 
-		printf("From: %s\n\
-		        Date: %s\n\n\
-		        %s\n\n\
-		        Attachment: ", msg->from, msg->subject, msg->body);
+		printf("From: %s\nDate: %s\nSubject: %s\n\n%s",
+		       msg->from, msg->date, msg->subject,
+		       msg->body);
 
-		for (int i = 0; msg->attachments[i] != NULL; ++i)
-			printf("%s ", msg->attachments[i]);
+		if (msg->attachments[0] != NULL) {
+			puts("\nAttachments: ");
+			for (int i = 0; msg->attachments[i] != NULL; ++i)
+				printf("[%d] %s\n", i, msg->attachments[i]);
+		}
 
-		puts("\n");
 		free(msg);
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
