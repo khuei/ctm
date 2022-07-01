@@ -20,7 +20,7 @@ main(int argc, char *argv[])
 		return -1;
 	}
 
-	if (!strcmp(argv[1], "create")) {
+	if (!strcmp(argv[1], "new")) {
 		clear_log();
 
 		const char *email_addr = create_addr();
