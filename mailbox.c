@@ -124,24 +124,13 @@ parse_mailbox(void)
 	for (int i = 0; i < array_len; ++i) {
 		element = json_object_array_get_idx(array, i);
 
-		id = json_object_object_get(element, "id");
-		from = json_object_object_get(element, "from");
-		subject = json_object_object_get(element, "subject");
-		date = json_object_object_get(element, "date");
-		
 		append(&head,
-		       json_object_get_string(id),
-		       json_object_get_string(from),
-		       json_object_get_string(subject),
-		       json_object_get_string(date));
+		       json_object_get_string(json_object_object_get(element, "id")),
+		       json_object_get_string(json_object_object_get(element, "from")),
+		       json_object_get_string(json_object_object_get(element, "subject")),
+		       json_object_get_string(json_object_object_get(element, "date")));
 	}
 
-	json_object_put(element);
-	json_object_put(array);
-	json_object_put(id);
-	json_object_put(from);
-	json_object_put(subject);
-	json_object_put(date);
 	free(conf_dir);
 
 	return head;
