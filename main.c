@@ -54,8 +54,8 @@ main(int argc, char *argv[])
 		}
 
 		for (int i = 1; mailbox != NULL; mailbox = mailbox->next) {
-			printf("[%d | %s] subject: %s | from: %s | %s\n", i,
-			       mailbox->id, mailbox->subject, mailbox->from, mailbox->date);
+			printf("[%d] Subject: [ %s ] | From: [ %s ] | Date: [ %s ]\n", i,
+			       mailbox->subject, mailbox->from, mailbox->date);
 			++i;
 		}
 
