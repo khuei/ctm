@@ -26,7 +26,7 @@ main(int argc, char *argv[])
 		const char *email_addr = create_addr();
 
 		if (email_addr == NULL || !strcmp(email_addr, "(null)")) {
-			fprintf(stderr, "Error: unable to create new email address");
+			fprintf(stderr, "Error: unable to create new email address\n");
 			return -1;
 		}
 
@@ -42,14 +42,14 @@ main(int argc, char *argv[])
 		}
 	} else if (!strcmp(argv[1], "refresh")) {
 		retrieve_mailbox();
-		printf("Notice: successfully refresh mailbox");
+		printf("Notice: successfully refresh mailbox\n");
 	} else if (!strcmp(argv[1], "list")) {
 		Mail *mailbox = parse_mailbox();
 
 		if (mailbox == NULL) {
-			printf("Notice: mailbox is empty");
+			printf("Notice: mailbox is empty\n");
 			retrieve_mailbox();
-			printf("Notice: successfully refresh mailbox");
+			printf("Notice: successfully refresh mailbox\n");
 			return 0;
 		}
 
