@@ -42,7 +42,6 @@ main(int argc, char *argv[])
 		}
 	} else if (!strcmp(argv[1], "refresh")) {
 		retrieve_mailbox();
-		printf("Notice: successfully refresh mailbox\n");
 	} else if (!strcmp(argv[1], "list")) {
 		Mail *mailbox = parse_mailbox();
 
