@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <ftw.h>
 #include <dirent.h>
 #include <sys/types.h>
@@ -85,6 +86,38 @@ create_addr(Address **head, char *addr)
 	free(avail_domains);
 }
 
+void
+create_rand_addr(Address **head, int num)
+{
+	char *base_url = "https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=";
+	char *api_url = NULL;
+
+	json_object *array = NULL;
+	json_object *element = NULL;
+	const char *element_str = NULL;
+	int array_len = 0;
+
+	api_url = (char *)malloc((strlen(base_url) + (int)log(num) + 1) * sizeof(char));
+	sprintf(api_url, "%s%d", base_url, num);
+
+	parsed_json emails_json = get_parsed_json(api_url);
+
+	array = json_tokener_parse(emails_json.ptr);
+	array_len = (int)json_object_array_length(array);
+
+	for (int i = 0; i < array_len; ++i) {
+		element = json_object_array_get_idx(array, i);
+		element_str = json_object_get_string(element);
+
+		append(head, element_str, false);
+	}
+
+	json_object_put(array);
+	json_object_put(element);
+
+	free(api_url);
+	free(emails_json.ptr);
+}
 
 const char *
 parse_addr(void) {

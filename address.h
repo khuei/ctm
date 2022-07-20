@@ -8,6 +8,7 @@ typedef struct Address {
 	struct Address *next;
 } Address;
 
-void create_addr(Address **head, char *addr);
+void create_addr(Address **, char *);
+void create_rand_addr(Address **, int);
 const char *parse_addr(void);
 int clear_log(void);

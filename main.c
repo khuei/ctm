@@ -23,11 +23,15 @@ main(int argc, char *argv[])
 	if (!strcmp(argv[1], "addr")) {
 		Address *head = NULL;
 		if (!strcmp(argv[2], "create")) {
-			if (argv[3][0] != '\0') {
-				create_addr(&head, argv[3]);
-			} else {
-				fprintf(stderr, "Error: no email adddress is provided\n");
-				return -1;
+			if (argc == 4) {
+				if (argv[3][0] != '\0') {
+					create_addr(&head, argv[3]);
+				} else {
+					fprintf(stderr, "Error: no email adddress is provided\n");
+					return -1;
+				}
+			} else if (argc == 5 && !strcmp(argv[3], "-r")) {
+				create_rand_addr(&head, (int)strtol(argv[4], NULL, 10));
 			}
 		} else if (!strcmp(argv[2], "new")) {
 		} else if (!strcmp(argv[2], "delete")) {
