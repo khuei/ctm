@@ -189,6 +189,56 @@ append(Address **head, const char *addr)
 }
 
 int
+select_addr_t(Address **head, const char *addr) {
+	if (*head == NULL)
+		return false;
+
+	bool has_addr = false;
+	Address *current = *head;
+
+	while (current != NULL) {
+		if (!strcmp(current->addr, addr))
+			has_addr = true;
+	}
+
+	if (!has_addr)
+		return false;
+
+	while (current != NULL) {
+		if (!strcmp(current->addr, addr))
+			current->is_selected = true;
+		else
+			current->is_selected = false;
+
+		current = current->next;
+	}
+
+	return true;
+}
+
+int
+select_addr_n(Address **head, int selection) {
+	if (*head == NULL)
+		return false;
+
+	Address *current = *head;
+
+	for (int i = 1; current != NULL; ++i) {
+		if (i == selection)
+			current->is_selected = true;
+		else
+			current->is_selected = false;
+
+		current = current->next;
+	}
+
+	if (current == NULL)
+		return false;
+
+	return true;
+}
+
+int
 delete_addr_t(Address **head, const char *addr)
 {
 	if (*head == NULL)

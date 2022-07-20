@@ -42,6 +42,11 @@ main(int argc, char *argv[])
 				delete_addr_t(&head, argv[3]);
 			else
 				delete_addr_n(&head, (int)strtol(argv[3], NULL, 10));
+		} else if (!strcmp(argv[2], "select")) {
+			if (!is_number(argv[3]))
+				select_addr_t(&head, argv[3]);
+			else
+				select_addr_n(&head, (int)strtol(argv[3], NULL, 10));
 		} else if (!strcmp(argv[2], "current")) {
 			const char *current_addr = parse_addr();
 
