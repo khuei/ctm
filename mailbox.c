@@ -21,7 +21,7 @@ retrieve_mailbox(void)
 	char *base_url = "https://www.1secmail.com/api/v1/?action=getMessages&login=";
 	char *api_url = NULL;
 
-	const char *email_addr = parse_addr();
+	const char *email_addr = parse_current_addr();
 	char name[strlen(email_addr)];
 	char domain[strlen(email_addr)];
 
@@ -92,7 +92,7 @@ parse_mailbox(void)
 {
 	struct stat st = { 0 };
 
-	const char *email_addr = parse_addr();
+	const char *email_addr = parse_current_addr();
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *conf_dir = (char *)malloc(sizeof(char) * 
 	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log") + 

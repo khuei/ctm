@@ -12,6 +12,6 @@ void create_addr(Address **, char *);
 void create_rand_addr(Address **, int);
 int select_addr(Address **, const char *);
 int delete_addr(Address **, const char *);
-const char *parse_addr(void);
+const char *parse_current_addr(void);
 void store_addr(Address **);
 int clear_log(void);

@@ -122,7 +122,7 @@ create_rand_addr(Address **head, int num)
 }
 
 const char *
-parse_addr(void) {
+parse_current_addr(void) {
 	struct stat st = { 0 };
 
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
@@ -382,7 +382,7 @@ int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW
 int
 clear_log(void)
 {
-	const char *email_addr = parse_addr();
+	const char *email_addr = parse_current_addr();
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *log_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) +
 						       strlen("/ctm/") +

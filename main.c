@@ -63,10 +63,10 @@ main(int argc, char *argv[])
 				current = current->next;
 			}
 		} else if (!strcmp(argv[2], "current")) {
-			const char *current_addr = parse_addr();
+			const char *current_addr = parse_current_addr();
 
 			if (current_addr != NULL && strcmp(current_addr, "(null)")) {
-				printf("%s\n", parse_addr());
+				printf("%s\n", parse_current_addr());
 			} else {
 				fprintf(stderr, "Error: unable to get current email address\n");
 				return -1;

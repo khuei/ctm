@@ -20,7 +20,7 @@ parse_message(char *id)
 {
 	struct stat st = { 0 };
 
-	const char *email_addr = parse_addr();
+	const char *email_addr = parse_current_addr();
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *conf_dir = (char *)malloc(sizeof(char) * 
 	                 (strlen(xdg_path) + strlen("/ctm/message/") +
