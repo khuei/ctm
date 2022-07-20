@@ -20,24 +20,28 @@ main(int argc, char *argv[])
 		return -1;
 	}
 
-	if (!strcmp(argv[1], "new")) {
-		clear_log();
+	if (!strcmp(argv[1], "addr")) {
+		Address *head = NULL;
+		if (!strcmp(argv[2], "create")) {
+			if (argv[3][0] != '\0') {
+				create_addr(&head, argv[3]);
+			} else {
+				fprintf(stderr, "Error: no email adddress is provided\n");
+				return -1;
+			}
+		} else if (!strcmp(argv[2], "new")) {
+		} else if (!strcmp(argv[2], "delete")) {
+		} else if (!strcmp(argv[2], "current")) {
+			const char *current_addr = parse_addr();
 
-		const char *email_addr = create_addr();
-
-		if (email_addr == NULL || !strcmp(email_addr, "(null)")) {
-			fprintf(stderr, "Error: unable to create new email address\n");
-			return -1;
-		}
-
-		printf("%s\n", email_addr);
-	} else if (!strcmp(argv[1], "current")) {
-		const char *current_addr = parse_addr();
-		
-		if (current_addr != NULL && strcmp(current_addr, "(null)")) {
-			printf("%s\n", parse_addr());
+			if (current_addr != NULL && strcmp(current_addr, "(null)")) {
+				printf("%s\n", parse_addr());
+			} else {
+				fprintf(stderr, "Error: unable to get current email address\n");
+				return -1;
+			}
 		} else {
-			fprintf(stderr, "Error: unable to get current email address\n");
+			fprintf(stderr, "Error: invalid argument\n");
 			return -1;
 		}
 	} else if (!strcmp(argv[1], "refresh")) {

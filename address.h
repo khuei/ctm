@@ -1,5 +1,13 @@
 #pragma once
 
-const char *create_addr(void);
+#include <stdbool.h>
+
+typedef struct Address {
+	const char *addr;
+	bool is_selected;
+	struct Address *next;
+} Address;
+
+void create_addr(Address **head, char *addr);
 const char *parse_addr(void);
 int clear_log(void);

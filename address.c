@@ -15,47 +15,74 @@
 #include "address.h"
 
 char **get_domains(void);
+void append(Address **, const char *, bool);
 
-const char *
-create_addr(void)
+void
+create_addr(Address **head, char *addr)
 {
-	char *api_url = "https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1";
-	json_object *array = NULL;
-	json_object *element;
-	const char *element_str;
-
-	parsed_json addr_json = get_parsed_json(api_url);
-	array = json_tokener_parse(addr_json.ptr);
-	
-	element = json_object_array_get_idx(array, 0);
-	element_str = json_object_get_string(element);
-
-	struct stat st = { 0 };
-
-	char *xdg_path = getenv("XDG_CONFIG_HOME");
-	char *conf_dir = (char *)malloc(sizeof(char) * 
-	                 (strlen(xdg_path) + strlen("/ctm/address.log") + 1));
-
-	strcpy(conf_dir, xdg_path);
-	strcat(conf_dir, "/ctm");
-
-	if (stat(conf_dir, &st) == -1)
-		mkdir(conf_dir, 0700);
-
-	char *log_file = strcat(conf_dir, "/address.log");
-
-	FILE *file = fopen(log_file, "w");
-	if (file != NULL) {
-		fprintf(file, "%s\n", element_str);
-		fclose(file);
+	if (!strchr(addr, '@') || !strchr(addr, '.')) {
+		fprintf(stderr, "Error: the address \"%s\" is invalid", addr);
+		return;
 	}
 
-	json_object_put(array);
-	json_object_put(element);
-	free(addr_json.ptr);
-	free(conf_dir);
+	bool is_good = false;
 
-	return element_str;
+	char *blacklist_addr[] = { "abuse",      "webmaster",  "contact",
+		                   "postmaster", "hostmaster", "admin" };
+	char **avail_domains = get_domains();
+
+	bool good_addr = true;
+	bool good_domain = false;
+
+	int track_index = 0;
+	int before_at = 1;
+	char name[strlen(addr)];
+	char domain[strlen(addr)];
+
+	for (int i = 0; i < strlen(addr); ++i) {
+		if (addr[i] != '@' && before_at) {
+			name[track_index] = addr[i];
+			++track_index;
+		} else if (!before_at) {
+			domain[track_index] = addr[i];
+			++track_index;
+		} else {
+			name[track_index] = '\0';
+			before_at = 0;
+			track_index = 0;
+			continue;
+		}
+	}
+	domain[track_index] = '\0';
+
+	for (int i = 0; i < (sizeof(blacklist_addr) / sizeof(blacklist_addr[0])); ++i) {
+		if (!strcmp(name, blacklist_addr[i]))
+			good_addr = false;
+	}
+
+	for (int i = 0; avail_domains[i] != NULL; ++i) {
+		if (!strcmp(domain, avail_domains[i]))
+			good_domain = true;
+	}
+
+	if (good_addr && good_domain) {
+		is_good = true;
+	} else if (!good_addr && good_domain) {
+		fprintf(stderr, "Error: the address \"%s\" is invalid", name);
+		return;
+	} else if (good_addr && !good_domain) {
+		fprintf(stderr, "Error: the domain \"%s\" is invalid", domain);
+		return;
+	} else if (!good_addr && !good_domain) {
+		fprintf(stderr, "Error: the address \"%s\" is invalid\nError: the domain \"%s\" is invalid",
+		        name, domain);
+		return;
+	}
+
+	if (is_good)
+		append(head, addr, true);
+
+	free(avail_domains);
 }
 
 
@@ -65,7 +92,7 @@ parse_addr(void) {
 
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *conf_dir = (char *)malloc(sizeof(char) * 
-	                 (strlen(xdg_path) + strlen("/ctm/address.log") + 1));
+	                 (strlen(xdg_path) + strlen("/ctm/current_address.log") + 1));
 
 	strcpy(conf_dir, xdg_path);
 	strcat(conf_dir, "/ctm");
@@ -76,7 +103,7 @@ parse_addr(void) {
 		return NULL;
 	}
 
-	char *log_file = strcat(conf_dir, "/address.log");
+	char *log_file = strcat(conf_dir, "/current_address.log");
 
 	FILE *file = fopen(log_file, "r");
 	char *line = NULL;
@@ -94,6 +121,40 @@ parse_addr(void) {
 	free(conf_dir);
 
 	return line;
+}
+
+void
+append(Address **head, const char *addr, bool selected)
+{
+	Address *check = *head;
+
+	while (check != NULL) {
+		if (!strcmp(check->addr, addr))
+			return;
+
+		check = check->next;
+	}
+
+	Address *new = (Address *)malloc(sizeof(Address));
+	Address *current = *head;
+
+	new->is_selected = selected;
+	new->addr = addr;
+	new->next = NULL;
+
+	if (*head == NULL) {
+		*head = new;
+		return;
+	}
+
+	while (current->next != NULL) {
+		if (!strcmp(current->addr, addr))
+			return;
+
+		current = current->next;
+	}
+
+	current->next = new;
 }
 
 char **
