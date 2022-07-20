@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 #include <ftw.h>
 #include <dirent.h>
 #include <sys/types.h>
@@ -15,8 +16,9 @@
 #include "json.h"
 #include "address.h"
 
-char **get_domains(void);
-void append(Address **, const char *);
+static char **get_domains(void);
+static void append(Address **, const char *);
+static bool is_number(const char []);
 
 void
 create_addr(Address **head, char *addr)
@@ -189,57 +191,49 @@ append(Address **head, const char *addr)
 }
 
 int
-select_addr_t(Address **head, const char *addr) {
+select_addr(Address **head, const char *input) {
 	if (*head == NULL)
 		return false;
 
-	bool has_addr = false;
 	Address *current = *head;
 
-	while (current != NULL) {
-		if (!strcmp(current->addr, addr))
-			has_addr = true;
-	}
+	if (!is_number(input)) {
+		bool has_addr = false;
+		while (current != NULL) {
+			if (!strcmp(current->addr, input))
+				has_addr = true;
+		}
 
-	if (!has_addr)
-		return false;
+		if (!has_addr)
+			return false;
 
-	while (current != NULL) {
-		if (!strcmp(current->addr, addr))
-			current->is_selected = true;
-		else
-			current->is_selected = false;
+		while (current != NULL) {
+			if (!strcmp(current->addr, input))
+				current->is_selected = true;
+			else
+				current->is_selected = false;
 
-		current = current->next;
+			current = current->next;
+		}
+	} else {
+		for (int i = 1; current != NULL; ++i) {
+			if (i == strtol(input, NULL, 10))
+				current->is_selected = true;
+			else
+				current->is_selected = false;
+
+			current = current->next;
+		}
+
+		if (current == NULL)
+			return false;
 	}
 
 	return true;
 }
 
 int
-select_addr_n(Address **head, int selection) {
-	if (*head == NULL)
-		return false;
-
-	Address *current = *head;
-
-	for (int i = 1; current != NULL; ++i) {
-		if (i == selection)
-			current->is_selected = true;
-		else
-			current->is_selected = false;
-
-		current = current->next;
-	}
-
-	if (current == NULL)
-		return false;
-
-	return true;
-}
-
-int
-delete_addr_t(Address **head, const char *addr)
+delete_addr(Address **head, const char *input)
 {
 	if (*head == NULL)
 		return false;
@@ -248,46 +242,14 @@ delete_addr_t(Address **head, const char *addr)
 	Address *current = *head;
 	Address *next = current->next;
 
-	if (current != NULL && !strcmp(current->addr, addr)) {
-		*head = current->next;
-		free(current);
-		return true;
-	}
+	if (!is_number(input)) {
+		if (current != NULL && !strcmp(current->addr, input)) {
+			*head = current->next;
+			free(current);
+			return true;
+		}
 
-	while (current != NULL && strcmp(current->addr, addr)) {
-		prev = current;
-		current = current->next;
-	}
-
-	if (current == NULL)
-		return false;
-
-	prev->next = current->next;
-
-	free(current);
-
-	return true;
-}
-
-int
-delete_addr_n(Address **head, int selection) {
-	if (selection < 1) {
-		fprintf(stderr, "Error: invalid number input");
-		return false;
-	}
-
-	if (*head == NULL)
-		return false;
-
-	Address *prev = NULL;
-	Address *current = *head;
-	Address *next = current->next;
-	
-	if (selection == 1) {
-		*head = current->next;
-		free(current);
-	} else {
-		for (int i = 2; current != NULL && i <= selection; ++i) {
+		while (current != NULL && strcmp(current->addr, input)) {
 			prev = current;
 			current = current->next;
 		}
@@ -296,8 +258,25 @@ delete_addr_n(Address **head, int selection) {
 			return false;
 
 		prev->next = current->next;
-		free(current);
+
+	} else {
+		if (strtol(input, NULL, 10) == 1) {
+			*head = current->next;
+		} else {
+			for (int i = 2; current != NULL && 
+			     i <= strtol(input, NULL, 10); ++i) {
+				prev = current;
+				current = current->next;
+			}
+
+			if (current == NULL)
+				return false;
+
+			prev->next = current->next;
+		}
 	}
+
+	free(current);
 
 	return true;
 }
@@ -361,4 +340,20 @@ clear_log(void)
 		return 0;
 	else
 		return -1;
+}
+
+bool
+is_number(const char number[])
+{
+	int i = 0;
+
+	if (number[0] == '-')
+		i = 1;
+
+	for (; number[i] != 0; i++) {
+		if (!isdigit(number[i]))
+			return false;
+	}
+
+	return true;
 }
