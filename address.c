@@ -312,14 +312,15 @@ store_addr(Address **head)
 		struct stat st = { 0 };
 
 		char *xdg_path = getenv("XDG_CONFIG_HOME");
-		char *conf_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) + strlen("/ctm/email.log") + 1));
+		char *conf_dir = (char *)malloc(sizeof(char) * 
+		                 (strlen(xdg_path) + strlen("/ctm/address.log") + 1));
 		strcpy(conf_dir, xdg_path);
 		strcat(conf_dir, "/ctm");
 
 		if (stat(conf_dir, &st) == -1)
 			mkdir(conf_dir, 0700);
 
-		char *log_file = strcat(conf_dir, "/addresses.log");
+		char *log_file = strcat(conf_dir, "/address.log");
 
 		FILE *file = fopen(log_file, "w");
 
