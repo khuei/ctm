@@ -76,45 +76,7 @@ main(int argc, char *argv[])
 			return -1;
 		}
 
-		if (head == NULL) {
-			return 1;
-		} else {
-			struct stat st = { 0 };
-
-			char *xdg_path = getenv("XDG_CONFIG_HOME");
-			char *conf_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) + strlen("/ctm/email.log") + 1));
-			strcpy(conf_dir, xdg_path);
-			strcat(conf_dir, "/ctm");
-
-			if (stat(conf_dir, &st) == -1)
-				mkdir(conf_dir, 0700);
-
-			char *log_file = strcat(conf_dir, "/addresses.log");
-
-			FILE *file = fopen(log_file, "w");
-
-			if (file != NULL) {
-				while (head != NULL) {
-					fprintf(file, "%s %d\n", head->addr, head->is_selected);
-					head = head->next;
-				}
-
-				fclose(file);
-			}
-
-			free(conf_dir);
-		}
-
-		Address *current = head;
-		Address *next = NULL;
-
-		while (current->next != NULL) {
-			next = current->next;
-			free(current);
-			current = next;
-		}
-
-		head = NULL;
+		store_addr(&head);
 	} else if (!strcmp(argv[1], "refresh")) {
 		retrieve_mailbox();
 	} else if (!strcmp(argv[1], "list")) {

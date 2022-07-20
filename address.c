@@ -303,6 +303,43 @@ delete_addr(Address **head, const char *input)
 	return true;
 }
 
+void
+store_addr(Address **head)
+{
+		if (*head == NULL)
+			return;
+
+		struct stat st = { 0 };
+
+		char *xdg_path = getenv("XDG_CONFIG_HOME");
+		char *conf_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) + strlen("/ctm/email.log") + 1));
+		strcpy(conf_dir, xdg_path);
+		strcat(conf_dir, "/ctm");
+
+		if (stat(conf_dir, &st) == -1)
+			mkdir(conf_dir, 0700);
+
+		char *log_file = strcat(conf_dir, "/addresses.log");
+
+		FILE *file = fopen(log_file, "w");
+
+		Address *current = *head;
+		Address *next = NULL;
+
+		if (file != NULL) {
+			while (current != NULL) {
+				fprintf(file, "%s %d\n", current->addr, current->is_selected);
+				next = current->next;
+				free(current);
+				current = next;
+			}
+
+			fclose(file);
+		}
+
+		free(conf_dir);
+}
+
 char **
 get_domains(void)
 {
@@ -347,8 +384,8 @@ clear_log(void)
 	const char *email_addr = parse_addr();
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *log_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) +
-	                                                strlen("/ctm/") +
-	                                                strlen(email_addr) + 1));
+						       strlen("/ctm/") +
+						       strlen(email_addr) + 1));
 
 	strcpy(log_dir, xdg_path);
 	strcat(log_dir, "/ctm/");
