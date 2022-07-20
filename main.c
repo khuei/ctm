@@ -49,6 +49,17 @@ main(int argc, char *argv[])
 				fprintf(stderr, "Error: empty input");
 				return -1;
 			}
+		} else if (!strcmp(argv[2], "list")) {
+			Address *current = head;;
+
+			for (int i = 1; current != NULL; ++i) {
+				if (current->is_selected)
+					printf("> [%d] - %s\n", i, current->addr);
+				else
+					printf("[%d] - %s\n", i, current->addr);
+
+				current = current->next;
+			}
 		} else if (!strcmp(argv[2], "current")) {
 			const char *current_addr = parse_addr();
 
