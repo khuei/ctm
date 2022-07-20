@@ -18,6 +18,7 @@
 
 static char **get_domains(void);
 static void append(Address **, const char *);
+static void append_b(Address **, const char *, bool);
 static bool is_number(const char []);
 
 void
@@ -121,6 +122,44 @@ create_rand_addr(Address **head, int num)
 	free(emails_json.ptr);
 }
 
+Address *
+parse_addr(void)
+{
+	Address *head = NULL;
+
+	char *xdg_path = getenv("XDG_CONFIG_HOME");
+	char *log_file = (char *)malloc(sizeof(char) * 
+	                 (strlen(xdg_path) + strlen("/ctm/email.log") + 1));
+	strcpy(log_file, xdg_path);
+	strcat(log_file, "/ctm/email.log");
+
+	FILE *file = fopen(log_file, "r");
+
+	if (file != NULL) {
+		char *line = NULL;
+		size_t len = 0;
+
+		while (getline(&line, &len, file) != -1) {
+			line[strcspn(line, "\r\n")] = '\0';
+
+			char *addr = NULL;
+			char *is_selected = NULL;
+
+			addr = strtok(line, " ");
+			is_selected = strtok(NULL, " ");
+
+			append_b(&head, addr, strtol(is_selected, NULL, 10));
+			line = NULL;
+		}
+
+		fclose(file);
+	}
+
+	free(log_file);
+
+	return head;
+}
+
 const char *
 parse_current_addr(void) {
 	struct stat st = { 0 };
@@ -174,6 +213,38 @@ append(Address **head, const char *addr)
 	Address *current = *head;
 
 	new->is_selected = true;
+	new->addr = addr;
+	new->next = NULL;
+
+	if (*head == NULL) {
+		*head = new;
+		return;
+	}
+
+	while (current->next != NULL) {
+		current->is_selected = false;
+		current = current->next;
+	}
+
+	current->next = new;
+}
+
+void
+append_b(Address **head, const char *addr, bool is_selected)
+{
+	Address *check = *head;
+
+	while (check != NULL) {
+		if (!strcmp(check->addr, addr))
+			return;
+
+		check = check->next;
+	}
+
+	Address *new = (Address *)malloc(sizeof(Address));
+	Address *current = *head;
+
+	new->is_selected = is_selected;
 	new->addr = addr;
 	new->next = NULL;
 

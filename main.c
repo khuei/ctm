@@ -22,7 +22,7 @@ main(int argc, char *argv[])
 	}
 
 	if (!strcmp(argv[1], "addr")) {
-		Address *head = NULL;
+		Address *head = parse_addr();
 
 		if (!strcmp(argv[2], "create")) {
 			if (argc == 4) {
