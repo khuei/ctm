@@ -145,6 +145,15 @@ main(int argc, char *argv[])
 		}
 
 		free(msg);
+	} else if (!strcmp(argv[1], "help")) {
+		puts("Usage: ctm [command]");
+		puts("Command:");
+		puts("   new     -- create new email address");
+		puts("   current -- display current email address");
+		puts("   refresh -- reload mailbox");
+		puts("   list    -- show all messages in a list");
+		puts("   view    -- display specified message");
+
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
 		return -1;
