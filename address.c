@@ -16,7 +16,7 @@
 #include "address.h"
 
 char **get_domains(void);
-void append(Address **, const char *, bool);
+void append(Address **, const char *);
 
 void
 create_addr(Address **head, char *addr)
@@ -81,7 +81,7 @@ create_addr(Address **head, char *addr)
 	}
 
 	if (is_good)
-		append(head, addr, true);
+		append(head, addr);
 
 	free(avail_domains);
 }
@@ -109,7 +109,7 @@ create_rand_addr(Address **head, int num)
 		element = json_object_array_get_idx(array, i);
 		element_str = json_object_get_string(element);
 
-		append(head, element_str, false);
+		append(head, element_str);
 	}
 
 	json_object_put(array);
@@ -157,7 +157,7 @@ parse_addr(void) {
 }
 
 void
-append(Address **head, const char *addr, bool selected)
+append(Address **head, const char *addr)
 {
 	Address *check = *head;
 
@@ -171,7 +171,7 @@ append(Address **head, const char *addr, bool selected)
 	Address *new = (Address *)malloc(sizeof(Address));
 	Address *current = *head;
 
-	new->is_selected = selected;
+	new->is_selected = true;
 	new->addr = addr;
 	new->next = NULL;
 
@@ -181,9 +181,7 @@ append(Address **head, const char *addr, bool selected)
 	}
 
 	while (current->next != NULL) {
-		if (!strcmp(current->addr, addr))
-			return;
-
+		current->is_selected = false;
 		current = current->next;
 	}
 

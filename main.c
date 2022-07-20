@@ -34,6 +34,7 @@ main(int argc, char *argv[])
 				create_rand_addr(&head, (int)strtol(argv[4], NULL, 10));
 			}
 		} else if (!strcmp(argv[2], "new")) {
+				create_rand_addr(&head, 1);
 		} else if (!strcmp(argv[2], "delete")) {
 		} else if (!strcmp(argv[2], "current")) {
 			const char *current_addr = parse_addr();
