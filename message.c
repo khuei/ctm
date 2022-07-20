@@ -13,7 +13,7 @@
 #include "address.h"
 #include "message.h"
 
-char *get_filetype(const char *);
+static char *get_filetype(const char *);
 
 Message *
 parse_message(char *id)

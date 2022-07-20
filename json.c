@@ -7,8 +7,8 @@
 
 #include "json.h"
 
-void init_json_struct(parsed_json *);
-size_t write_json_struct(void *, size_t, size_t, parsed_json *);
+static void init_json_struct(parsed_json *);
+static size_t write_json_struct(void *, size_t, size_t, parsed_json *);
 
 parsed_json
 get_parsed_json(const char *url)
