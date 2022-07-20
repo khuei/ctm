@@ -188,6 +188,70 @@ append(Address **head, const char *addr)
 	current->next = new;
 }
 
+int
+delete_addr_t(Address **head, const char *addr)
+{
+	if (*head == NULL)
+		return false;
+
+	Address *prev = NULL;
+	Address *current = *head;
+	Address *next = current->next;
+
+	if (current != NULL && !strcmp(current->addr, addr)) {
+		*head = current->next;
+		free(current);
+		return true;
+	}
+
+	while (current != NULL && strcmp(current->addr, addr)) {
+		prev = current;
+		current = current->next;
+	}
+
+	if (current == NULL)
+		return false;
+
+	prev->next = current->next;
+
+	free(current);
+
+	return true;
+}
+
+int
+delete_addr_n(Address **head, int selection) {
+	if (selection < 1) {
+		fprintf(stderr, "Error: invalid number input");
+		return false;
+	}
+
+	if (*head == NULL)
+		return false;
+
+	Address *prev = NULL;
+	Address *current = *head;
+	Address *next = current->next;
+	
+	if (selection == 1) {
+		*head = current->next;
+		free(current);
+	} else {
+		for (int i = 2; current != NULL && i <= selection; ++i) {
+			prev = current;
+			current = current->next;
+		}
+
+		if (current == NULL)
+			return false;
+
+		prev->next = current->next;
+		free(current);
+	}
+
+	return true;
+}
+
 char **
 get_domains(void)
 {

@@ -10,6 +10,8 @@
 #include "mailbox.h"
 #include "message.h"
 
+bool is_number(char []);
+
 int
 main(int argc, char *argv[])
 {
@@ -36,6 +38,10 @@ main(int argc, char *argv[])
 		} else if (!strcmp(argv[2], "new")) {
 				create_rand_addr(&head, 1);
 		} else if (!strcmp(argv[2], "delete")) {
+			if (!is_number(argv[3]))
+				delete_addr_t(&head, argv[3]);
+			else
+				delete_addr_n(&head, (int)strtol(argv[3], NULL, 10));
 		} else if (!strcmp(argv[2], "current")) {
 			const char *current_addr = parse_addr();
 
@@ -116,4 +122,20 @@ main(int argc, char *argv[])
 	}
 
 	return 0;
+}
+
+bool
+is_number(char number[])
+{
+	int i = 0;
+
+	if (number[0] == '-')
+		i = 1;
+
+	for (; number[i] != 0; i++) {
+		if (!isdigit(number[i]))
+			return false;
+	}
+
+	return true;
 }
