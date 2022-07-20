@@ -62,10 +62,12 @@ retrieve_mailbox(void)
 
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *conf_dir = (char *)malloc(sizeof(char) * 
-	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log") + 1));
+	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log/") +
+	                  strlen(email_addr) + 1));
 
 	strcpy(conf_dir, xdg_path);
-	strcat(conf_dir, "/ctm");
+	strcat(conf_dir, "/ctm/");
+	strcat(conf_dir, email_addr);
 
 	if (stat(conf_dir, &st) == -1)
 		mkdir(conf_dir, 0700);
@@ -90,12 +92,15 @@ parse_mailbox(void)
 {
 	struct stat st = { 0 };
 
+	const char *email_addr = parse_addr();
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *conf_dir = (char *)malloc(sizeof(char) * 
-	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log") + 1));
+	                 (strlen(xdg_path) + strlen("/ctm/mailbox.log") + 
+	                  strlen(email_addr) + 1));
 
 	strcpy(conf_dir, xdg_path);
-	strcat(conf_dir, "/ctm");
+	strcat(conf_dir, "/ctm/");
+	strcat(conf_dir, email_addr);
 
 	if (stat(conf_dir, &st) == -1) {
 		mkdir(conf_dir, 0700);

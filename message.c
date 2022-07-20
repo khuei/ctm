@@ -20,13 +20,16 @@ parse_message(char *id)
 {
 	struct stat st = { 0 };
 
+	const char *email_addr = parse_addr();
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *conf_dir = (char *)malloc(sizeof(char) * 
 	                 (strlen(xdg_path) + strlen("/ctm/message/") +
-	                  strlen(id) + strlen("/text.log") + 1));
+	                  strlen(email_addr) + strlen(id) + strlen("/text.log")
+	                  + 2));
 
 	strcpy(conf_dir, xdg_path);
-	strcat(conf_dir, "/ctm");
+	strcat(conf_dir, "/ctm/");
+	strcat(conf_dir, email_addr);
 
 	if (stat(conf_dir, &st) == -1)
 		mkdir(conf_dir, 0700);
@@ -48,7 +51,6 @@ parse_message(char *id)
 	Message *msg = (Message *)malloc(sizeof(Message));
 	json_object *root = NULL;
 
-	const char *email_addr = parse_addr();
 	char name[strlen(email_addr)];
 	char domain[strlen(email_addr)];
 
@@ -154,15 +156,14 @@ parse_message(char *id)
 			sprintf(msg->attachments[i], "%s", filename);
 		}
 
+		free(filename);
 		free(filetype);
 	}
 	msg->attachments[array_len] = NULL;
 
-	json_object_put(root);
 	json_object_put(attachment);
 	json_object_put(attachments);
 
-	free(filename);
 	free(conf_dir);
 	free(attm_url);
 

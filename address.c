@@ -137,31 +137,21 @@ int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW
 int
 clear_log(void)
 {
+	const char *email_addr = parse_addr();
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
-	char *conf_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) + 1));
+	char *log_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) +
+	                                                strlen("/ctm/") +
+	                                                strlen(email_addr) + 1));
 
-	strcpy(conf_dir, xdg_path);
-	strcat(conf_dir, "/ctm");
+	strcpy(log_dir, xdg_path);
+	strcat(log_dir, "/ctm/");
+	strcat(log_dir, email_addr);
 
-	char *mailbox_log = (char *)malloc(sizeof(char) *
-	                                   strlen("/mailbox.log") +
-	                                   strlen(conf_dir));
+	int rm_msg = nftw(log_dir, unlink_cb, 64, FTW_DEPTH |  FTW_PHYS);
 
-	strcpy(mailbox_log, conf_dir);
-	strcat(mailbox_log, "/mailbox.log");
-	int rm_mailbox = remove(mailbox_log);
+	free(log_dir);
 
-	char *msg_log = (char *)malloc(sizeof(char) * strlen(conf_dir) +
-	                               strlen("/message"));
-	strcpy(msg_log, conf_dir);
-	strcat(msg_log, "/message");
-
-	int rm_msg = nftw(msg_log, unlink_cb, 64, FTW_DEPTH |  FTW_PHYS);
-
-	free(conf_dir);
-	free(msg_log);
-
-	if (!rm_mailbox && !rm_msg)
+	if (!rm_msg)
 		return 0;
 	else
 		return -1;
