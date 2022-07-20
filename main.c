@@ -46,9 +46,9 @@ main(int argc, char *argv[])
 		Mail *mailbox = parse_mailbox();
 
 		if (mailbox == NULL) {
-			printf("Notice: mailbox is empty\n");
+			printf("Notice: mailbox is empty ... refreshing mailbox");
 			retrieve_mailbox();
-			printf("Notice: successfully refresh mailbox\n");
+			printf(" [ Success ]\n");
 			return 0;
 		}
 
