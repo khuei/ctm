@@ -416,15 +416,18 @@ store_addr(Address **head)
 		FILE *file = fopen(log_file, "w");
 
 		Address *current = *head;
+		Address *prev = NULL;
 		Address *next = NULL;
 
 		if (file != NULL) {
 			while (current != NULL) {
 				fprintf(file, "%s %d\n", current->addr, current->is_selected);
 				next = current->next;
-				free(current);
+				prev = current;
 				current = next;
+				free(prev);
 			}
+			free(current);
 
 			fclose(file);
 		}
