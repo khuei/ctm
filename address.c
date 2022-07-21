@@ -129,9 +129,9 @@ parse_addr(void)
 
 	char *xdg_path = getenv("XDG_CONFIG_HOME");
 	char *log_file = (char *)malloc(sizeof(char) * 
-	                 (strlen(xdg_path) + strlen("/ctm/email.log") + 1));
+	                 (strlen(xdg_path) + strlen("/ctm/address.log") + 1));
 	strcpy(log_file, xdg_path);
-	strcat(log_file, "/ctm/email.log");
+	strcat(log_file, "/ctm/address.log");
 
 	FILE *file = fopen(log_file, "r");
 
