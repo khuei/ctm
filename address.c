@@ -20,6 +20,7 @@ static char **get_domains(void);
 static void append(Address **, const char *);
 static void append_b(Address **, const char *, bool);
 static bool is_number(const char []);
+static int unlink_cb(const char *, const struct stat *, int, struct FTW *);
 
 void
 create_addr(Address **head, char *addr)
@@ -325,6 +326,11 @@ select_addr(Address **head, const char *input) {
 	return true;
 }
 
+int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
+{
+	return remove(fpath);
+}
+
 int
 delete_addr(Address **head, const char *input)
 {
@@ -334,6 +340,17 @@ delete_addr(Address **head, const char *input)
 	Address *prev = NULL;
 	Address *current = *head;
 	Address *next = current->next;
+
+	const char *email_addr = current->addr;;
+	char *xdg_path = getenv("XDG_CONFIG_HOME");
+	char *log_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) +
+	                                               strlen("/ctm/") +
+	                                               strlen(email_addr) + 1));
+	strcpy(log_dir, xdg_path);
+	strcat(log_dir, "/ctm/");
+	strcat(log_dir, email_addr);
+	nftw(log_dir, unlink_cb, 64, FTW_DEPTH |  FTW_PHYS);
+	free(log_dir);
 
 	if (!is_number(input)) {
 		if (current != NULL && !strcmp(current->addr, input)) {
@@ -443,34 +460,6 @@ get_domains(void)
 	json_object_put(array);
 
 	return domains;
-}
-
-int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
-{
-	return remove(fpath);
-}
-
-int
-clear_log(void)
-{
-	const char *email_addr = parse_current_addr();
-	char *xdg_path = getenv("XDG_CONFIG_HOME");
-	char *log_dir = (char *)malloc(sizeof(char) * (strlen(xdg_path) +
-						       strlen("/ctm/") +
-						       strlen(email_addr) + 1));
-
-	strcpy(log_dir, xdg_path);
-	strcat(log_dir, "/ctm/");
-	strcat(log_dir, email_addr);
-
-	int rm_msg = nftw(log_dir, unlink_cb, 64, FTW_DEPTH |  FTW_PHYS);
-
-	free(log_dir);
-
-	if (!rm_msg)
-		return 0;
-	else
-		return -1;
 }
 
 bool
