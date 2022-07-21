@@ -52,7 +52,7 @@ main(int argc, char *argv[])
 				return -1;
 			}
 		} else if (!strcmp(argv[2], "list")) {
-			Address *current = head;;
+			Address *current = head;
 
 			for (int i = 1; current != NULL; ++i) {
 				if (current->is_selected)
