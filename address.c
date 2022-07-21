@@ -268,6 +268,7 @@ select_addr(Address **head, const char *input) {
 		return false;
 
 	Address *current = *head;
+	const char *email_addr = NULL;
 
 	if (!is_number(input)) {
 		bool has_addr = false;
@@ -289,15 +290,17 @@ select_addr(Address **head, const char *input) {
 		}
 	} else {
 		for (int i = 1; current != NULL; ++i) {
-			if (i == strtol(input, NULL, 10))
+			if (i == strtol(input, NULL, 10)) {
 				current->is_selected = true;
-			else
+				email_addr = current->addr;
+			} else {
 				current->is_selected = false;
+			}
 
 			current = current->next;
 		}
 
-		if (current == NULL)
+		if (!email_addr)
 			return false;
 	}
 
@@ -314,10 +317,10 @@ select_addr(Address **head, const char *input) {
 
 	char *log_file = strcat(conf_dir, "/current_address.log");
 
-	FILE *file = fopen(log_file, "w");
+	FILE *file = fopen(log_file, "wb+");
 
 	if (file != NULL) {
-		fprintf(file, "%s\n", current->addr);
+		fprintf(file, "%s\n", email_addr);
 		fclose(file);
 	}
 
