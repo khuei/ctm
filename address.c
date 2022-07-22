@@ -255,6 +255,7 @@ append(Address **head, const char *addr)
 		current->is_selected = false;
 		current = current->next;
 	}
+	current->is_selected = false;
 
 	current->next = new;
 
@@ -289,6 +290,7 @@ append_b(Address **head, const char *addr, bool is_selected)
 		current->is_selected = false;
 		current = current->next;
 	}
+	current->is_selected = false;
 
 	current->next = new;
 
