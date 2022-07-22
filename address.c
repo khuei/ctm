@@ -459,7 +459,7 @@ get_domains(void)
 		domains[i] = (char *)element_str;
 	}
 
-	domains[array_len + 1] = NULL;
+	domains[array_len] = NULL;
 
 	free(domains_json.ptr);
 	json_object_put(element);
