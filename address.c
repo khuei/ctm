@@ -17,6 +17,7 @@
 #include "address.h"
 
 static char **get_domains(void);
+static void write_current_addr(const char *);
 static void append(Address **, const char *);
 static void append_b(Address **, const char *, bool);
 static bool is_number(const char []);
@@ -84,8 +85,10 @@ create_addr(Address **head, char *addr)
 		return;
 	}
 
-	if (is_good)
+	if (is_good) {
 		append(head, addr);
+		write_current_addr(addr);
+	}
 
 	free(avail_domains);
 }
@@ -199,6 +202,32 @@ parse_current_addr(void) {
 }
 
 void
+write_current_addr(const char *addr)
+{
+	struct stat st = { 0 };
+
+	char *xdg_path = getenv("XDG_CONFIG_HOME");
+	char *conf_dir = (char *)malloc(sizeof(char) * 
+	                 (strlen(xdg_path) + strlen("/ctm/current_address.log") + 1));
+	strcpy(conf_dir, xdg_path);
+	strcat(conf_dir, "/ctm");
+
+	if (stat(conf_dir, &st) == -1)
+		mkdir(conf_dir, 0700);
+
+	char *log_file = strcat(conf_dir, "/current_address.log");
+
+	FILE *file = fopen(log_file, "wb+");
+
+	if (file != NULL) {
+		fprintf(file, "%s\n", addr);
+		fclose(file);
+	}
+
+	free(conf_dir);
+}
+
+void
 append(Address **head, const char *addr)
 {
 	Address *check = *head;
@@ -228,6 +257,8 @@ append(Address **head, const char *addr)
 	}
 
 	current->next = new;
+
+	write_current_addr(new->addr);
 }
 
 void
@@ -260,6 +291,8 @@ append_b(Address **head, const char *addr, bool is_selected)
 	}
 
 	current->next = new;
+
+	write_current_addr(new->addr);
 }
 
 int
@@ -304,27 +337,7 @@ select_addr(Address **head, const char *input) {
 			return false;
 	}
 
-	struct stat st = { 0 };
-
-	char *xdg_path = getenv("XDG_CONFIG_HOME");
-	char *conf_dir = (char *)malloc(sizeof(char) * 
-	                 (strlen(xdg_path) + strlen("/ctm/current_address.log") + 1));
-	strcpy(conf_dir, xdg_path);
-	strcat(conf_dir, "/ctm");
-
-	if (stat(conf_dir, &st) == -1)
-		mkdir(conf_dir, 0700);
-
-	char *log_file = strcat(conf_dir, "/current_address.log");
-
-	FILE *file = fopen(log_file, "wb+");
-
-	if (file != NULL) {
-		fprintf(file, "%s\n", email_addr);
-		fclose(file);
-	}
-
-	free(conf_dir);
+	write_current_addr(email_addr);
 
 	return true;
 }
