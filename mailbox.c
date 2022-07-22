@@ -81,7 +81,6 @@ retrieve_mailbox(void)
 		fclose(file);
 	}
 
-	json_object_put(array);
 	free(api_url);
 	free(mailbox_json.ptr);
 	free(conf_dir);

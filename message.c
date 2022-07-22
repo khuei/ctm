@@ -161,9 +161,6 @@ parse_message(char *id)
 	}
 	msg->attachments[array_len] = NULL;
 
-	json_object_put(attachment);
-	json_object_put(attachments);
-
 	free(conf_dir);
 	free(attm_url);
 

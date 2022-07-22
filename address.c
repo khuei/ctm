@@ -119,9 +119,6 @@ create_rand_addr(Address **head, int num)
 		append(head, element_str);
 	}
 
-	json_object_put(array);
-	json_object_put(element);
-
 	free(api_url);
 	free(emails_json.ptr);
 }
@@ -477,8 +474,6 @@ get_domains(void)
 	domains[array_len] = NULL;
 
 	free(domains_json.ptr);
-	json_object_put(element);
-	json_object_put(array);
 
 	return domains;
 }
