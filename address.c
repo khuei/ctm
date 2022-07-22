@@ -117,6 +117,9 @@ create_rand_addr(Address **head, int num)
 		element_str = json_object_get_string(element);
 
 		append(head, element_str);
+
+		if (i == (array_len - 1))
+			write_current_addr(element_str);
 	}
 
 	free(api_url);
@@ -214,7 +217,7 @@ write_current_addr(const char *addr)
 
 	char *log_file = strcat(conf_dir, "/current_address.log");
 
-	FILE *file = fopen(log_file, "wb+");
+	FILE *file = fopen(log_file, "w");
 
 	if (file != NULL) {
 		fprintf(file, "%s\n", addr);
@@ -255,8 +258,6 @@ append(Address **head, const char *addr)
 	current->is_selected = false;
 
 	current->next = new;
-
-	write_current_addr(new->addr);
 }
 
 void
@@ -290,8 +291,6 @@ append_b(Address **head, const char *addr, bool is_selected)
 	current->is_selected = false;
 
 	current->next = new;
-
-	write_current_addr(new->addr);
 }
 
 int
