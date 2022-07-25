@@ -13,7 +13,7 @@
 
 static void append(Mail **, const char *, const char *, const char *, const char *);
 
-void
+int
 retrieve_mailbox(void)
 {
 	Mail *head = NULL;
@@ -55,7 +55,7 @@ retrieve_mailbox(void)
 
 	if (array_len == 0) {
 		printf("Notice: Mailbox is empty\n");
-		return;
+		return 0;
 	}
 
 	struct stat st = { 0 };
@@ -79,11 +79,16 @@ retrieve_mailbox(void)
 	if (file != NULL) {
 		fprintf(file, "%s\n", json_object_get_string(array));
 		fclose(file);
+	} else {
+		fprintf(stderr, "Error: unable to log mailbox\n");
+		return -1;
 	}
 
 	free(api_url);
 	free(mailbox_json.ptr);
 	free(conf_dir);
+
+	return 0;
 }
 
 Mail *

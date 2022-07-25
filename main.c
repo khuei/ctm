@@ -21,6 +21,8 @@ main(int argc, char *argv[])
 		return -1;
 	}
 
+	int exit_code = 0;
+
 	if (!strcmp(argv[1], "addr")) {
 		Address *head = parse_addr();
 
@@ -33,20 +35,20 @@ main(int argc, char *argv[])
 					return -1;
 				}
 			} else if (argc == 5 && !strcmp(argv[3], "-r")) {
-				create_rand_addr(&head, (int)strtol(argv[4], NULL, 10));
+				exit_code = create_rand_addr(&head, (int)strtol(argv[4], NULL, 10));
 			}
 		} else if (!strcmp(argv[2], "new")) {
-				create_rand_addr(&head, 1);
+				exit_code = create_rand_addr(&head, 1);
 		} else if (!strcmp(argv[2], "delete")) {
 			if (argv[3][0] != '\0') {
-				delete_addr(&head, argv[3]);
+				exit_code = delete_addr(&head, argv[3]);
 			} else {
 				fprintf(stderr, "Error: empty input\n");
 				return -1;
 			}
 		} else if (!strcmp(argv[2], "select")) {
 			if (argv[3][0] != '\0') {
-				select_addr(&head, argv[3]);
+				exit_code = select_addr(&head, argv[3]);
 			} else {
 				fprintf(stderr, "Error: empty input\n");
 				return -1;
@@ -76,7 +78,7 @@ main(int argc, char *argv[])
 			return -1;
 		}
 
-		store_addr(&head);
+		exit_code = store_addr(&head);
 	} else if (!strcmp(argv[1], "refresh")) {
 		retrieve_mailbox();
 	} else if (!strcmp(argv[1], "list")) {
@@ -84,8 +86,13 @@ main(int argc, char *argv[])
 
 		if (mailbox == NULL) {
 			printf("Notice: mailbox is empty ... refreshing mailbox ...");
-			retrieve_mailbox();
-			printf(" [ Success ]\n");
+			exit_code = retrieve_mailbox();
+
+			if (exit_code == 0)
+				printf("[ Success ]\n");
+			else
+				printf("[ Failed ]\n");
+
 			return 0;
 		}
 
@@ -143,5 +150,5 @@ main(int argc, char *argv[])
 		return -1;
 	}
 
-	return 0;
+	return exit_code;
 }
