@@ -27,7 +27,7 @@ void
 create_addr(Address **head, char *addr)
 {
 	if (!strchr(addr, '@') || !strchr(addr, '.')) {
-		fprintf(stderr, "Error: the address \"%s\" is invalid", addr);
+		fprintf(stderr, "Error: the address \"%s\" is invalid\n", addr);
 		return;
 	}
 
@@ -74,13 +74,13 @@ create_addr(Address **head, char *addr)
 	if (good_addr && good_domain) {
 		is_good = true;
 	} else if (!good_addr && good_domain) {
-		fprintf(stderr, "Error: the address \"%s\" is invalid", name);
+		fprintf(stderr, "Error: the address \"%s\" is invalid\n", name);
 		return;
 	} else if (good_addr && !good_domain) {
-		fprintf(stderr, "Error: the domain \"%s\" is invalid", domain);
+		fprintf(stderr, "Error: the domain \"%s\" is invalid\n", domain);
 		return;
 	} else if (!good_addr && !good_domain) {
-		fprintf(stderr, "Error: the address \"%s\" is invalid\nError: the domain \"%s\" is invalid",
+		fprintf(stderr, "Error: the address \"%s\" is invalid\nError: the domain \"%s\" is invalid\n",
 		        name, domain);
 		return;
 	}
@@ -178,6 +178,7 @@ parse_current_addr(void) {
 	if (stat(conf_dir, &st) == -1) {
 		mkdir(conf_dir, 0700);
 		free(conf_dir);
+		fprintf(stderr, "Warning: address log is empty\n");
 		return NULL;
 	}
 
@@ -233,8 +234,10 @@ append(Address **head, const char *addr)
 	Address *check = *head;
 
 	while (check != NULL) {
-		if (!strcmp(check->addr, addr))
+		if (!strcmp(check->addr, addr)) {
+			fprintf(stderr, "Error: address already exists\n");
 			return;
+		}
 
 		check = check->next;
 	}
@@ -266,8 +269,10 @@ append_b(Address **head, const char *addr, bool is_selected)
 	Address *check = *head;
 
 	while (check != NULL) {
-		if (!strcmp(check->addr, addr))
+		if (!strcmp(check->addr, addr)) {
+			fprintf(stderr, "Error: address already exists\n");
 			return;
+		}
 
 		check = check->next;
 	}
@@ -295,8 +300,10 @@ append_b(Address **head, const char *addr, bool is_selected)
 
 int
 select_addr(Address **head, const char *input) {
-	if (*head == NULL)
+	if (*head == NULL) {
+		fprintf(stderr, "Error: address list is empty\n");
 		return false;
+	}
 
 	Address *current = *head;
 	const char *email_addr = NULL;
@@ -308,8 +315,10 @@ select_addr(Address **head, const char *input) {
 				has_addr = true;
 		}
 
-		if (!has_addr)
+		if (!has_addr) {
+			fprintf(stderr, "Error: address does not exist\n");
 			return false;
+		}
 
 		while (current != NULL) {
 			if (!strcmp(current->addr, input))
@@ -331,8 +340,10 @@ select_addr(Address **head, const char *input) {
 			current = current->next;
 		}
 
-		if (!email_addr)
+		if (!email_addr) {
+			fprintf(stderr, "Error: address does not exist\n");
 			return false;
+		}
 	}
 
 	write_current_addr(email_addr);
@@ -348,8 +359,10 @@ int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW
 int
 delete_addr(Address **head, const char *input)
 {
-	if (*head == NULL)
+	if (*head == NULL) {
+		fprintf(stderr, "Error: address list is empty\n");
 		return false;
+	}
 
 	Address *prev = NULL;
 	Address *current = *head;
@@ -378,8 +391,10 @@ delete_addr(Address **head, const char *input)
 			current = current->next;
 		}
 
-		if (current == NULL)
+		if (current == NULL) {
+			fprintf(stderr, "Error: address does not exist\n");
 			return false;
+		}
 
 		prev->next = current->next;
 
@@ -393,8 +408,10 @@ delete_addr(Address **head, const char *input)
 				current = current->next;
 			}
 
-			if (current == NULL)
+			if (current == NULL) {
+				fprintf(stderr, "Error: address does not exist\n");
 				return false;
+			}
 
 			prev->next = current->next;
 		}

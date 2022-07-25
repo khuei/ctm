@@ -41,14 +41,14 @@ main(int argc, char *argv[])
 			if (argv[3][0] != '\0') {
 				delete_addr(&head, argv[3]);
 			} else {
-				fprintf(stderr, "Error: empty input");
+				fprintf(stderr, "Error: empty input\n");
 				return -1;
 			}
 		} else if (!strcmp(argv[2], "select")) {
 			if (argv[3][0] != '\0') {
 				select_addr(&head, argv[3]);
 			} else {
-				fprintf(stderr, "Error: empty input");
+				fprintf(stderr, "Error: empty input\n");
 				return -1;
 			}
 		} else if (!strcmp(argv[2], "list")) {
@@ -83,7 +83,7 @@ main(int argc, char *argv[])
 		Mail *mailbox = parse_mailbox();
 
 		if (mailbox == NULL) {
-			printf("Notice: mailbox is empty ... refreshing mailbox");
+			printf("Notice: mailbox is empty ... refreshing mailbox ...");
 			retrieve_mailbox();
 			printf(" [ Success ]\n");
 			return 0;
