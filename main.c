@@ -146,13 +146,21 @@ main(int argc, char *argv[])
 
 		free(msg);
 	} else if (!strcmp(argv[1], "help")) {
-		puts("Usage: ctm [command]");
-		puts("Command:");
-		puts("   new     -- create new email address");
-		puts("   current -- display current email address");
-		puts("   refresh -- reload mailbox");
-		puts("   list    -- show all messages in a list");
-		puts("   view    -- display specified message");
+		puts("Usage: ctm addr [command]");
+		puts("       ctm [command]");
+		puts("");
+		puts("Managing Email Address Commands:");
+		puts("    create  -- create email address");
+		puts("    new     -- create a new email address");
+		puts("    current -- display current email address");
+		puts("    select  -- select email address");
+		puts("    delete  -- delete email address");
+		puts("    refresh -- reload mailbox");
+		puts("");
+		puts("Email Commands:");
+		puts("    refresh -- reload mailbox");
+		puts("    list    -- show all messages in mailbox");
+		puts("    view    -- display specified message");
 
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
