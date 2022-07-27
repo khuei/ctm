@@ -1,0 +1,61 @@
+.TH "CTM" "1" "" "ctm VERSION" "ctm"
+
+.SH NAME
+.B ctm
+
+.SH SYNOPSIS
+\fBtimestamp\fR \fIaddr\fR [\fICOMMAND\fR]
+.br
+\fBtimestamp\fR [\fICOMMAND\fR]
+
+.SH DESCRIPTION
+\fBctm\fR is a disposable temporary mail application using 1secMail API
+
+.SH MANAGING EMAIL ADDRESS COMMAND
+.
+.HP
+\fBcreate\fR \fIADDRESS\fR
+.br
+Create a new email address
+
+.HP
+\fBnew\fR \fINUMBER\fR
+.br
+Create a specified number of random email address. If no input is provided, one random email address will be created.
+
+.HP
+\fBcurrent\fR
+.br
+Display current selected email address
+
+.HP
+\fBselect\fR \fIADDRESS|NUMBER\fR
+.br
+Select email address
+
+.HP
+\fBdelete\fR \fIADDRESS|NUMBER\fR
+.br
+delete email address
+
+.SH EMAIL COMMAND
+.
+.HP
+\fBrefresh\fR
+.br
+Reload mailbox
+
+.HP
+\fBlist\fR
+.br
+Show all messages in mailbox
+
+.HP
+\fBview\fR \fINUMBER\fR
+.br
+Display specified email message
+
+.HP
+\fBhelp\fR
+.br
+Show help message
