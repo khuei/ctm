@@ -9,7 +9,7 @@ typedef struct Address {
 } Address;
 
 int create_addr(Address **, char *);
-int create_rand_addr(Address **, int);
+int create_rand_addr(Address **, const char *);
 int select_addr(Address **, const char *);
 int delete_addr(Address **, const char *);
 Address *parse_addr(void);

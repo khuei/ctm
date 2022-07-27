@@ -99,8 +99,13 @@ create_addr(Address **head, char *addr)
 }
 
 int
-create_rand_addr(Address **head, int num)
+create_rand_addr(Address **head, const char *input)
 {
+	if(!is_number(input)) {
+		fprintf(stderr, "Error: input is not a number\n");
+		return -1;
+	}
+
 	char *base_url = "https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=";
 	char *api_url = NULL;
 
@@ -109,8 +114,8 @@ create_rand_addr(Address **head, int num)
 	const char *element_str = NULL;
 	int array_len = 0;
 
-	api_url = (char *)malloc((strlen(base_url) + (int)log(num) + 1) * sizeof(char));
-	sprintf(api_url, "%s%d", base_url, num);
+	api_url = (char *)malloc((strlen(base_url) + strlen(input) + 1) * sizeof(char));
+	sprintf(api_url, "%s%s", base_url, input);
 
 	parsed_json emails_json = get_parsed_json(api_url);
 
