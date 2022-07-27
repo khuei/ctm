@@ -27,26 +27,26 @@ main(int argc, char *argv[])
 		Address *head = parse_addr();
 
 		if (!strcmp(argv[2], "create")) {
-			if (argv[3][0] != '\0') {
+			if (argc == 4) {
 				create_addr(&head, argv[3]);
 			} else {
 				fprintf(stderr, "Error: no email adddress is provided\n");
 				exit_code = -1;
 			}
 		} else if (!strcmp(argv[2], "new")) {
-			if (argv[3][0] != '\0')
+			if (argc == 4)
 				exit_code = create_rand_addr(&head, argv[3]);
 			else
 				exit_code = create_rand_addr(&head, "1");
 		} else if (!strcmp(argv[2], "delete")) {
-			if (argv[3][0] != '\0') {
+			if (argc == 4) {
 				exit_code = delete_addr(&head, argv[3]);
 			} else {
 				fprintf(stderr, "Error: empty input\n");
 				exit_code = -1;
 			}
 		} else if (!strcmp(argv[2], "select")) {
-			if (argv[3][0] != '\0') {
+			if (argc == 4) {
 				exit_code = select_addr(&head, argv[3]);
 			} else {
 				fprintf(stderr, "Error: empty input\n");
