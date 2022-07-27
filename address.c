@@ -138,8 +138,10 @@ create_rand_addr(Address **head, const char *input)
 
 		append(head, element_str);
 
-		if (i == (array_len - 1))
-			write_current_addr(element_str);
+		if (i == (array_len - 1)) {
+			if(write_current_addr(element_str))
+				return -1;
+		}
 	}
 
 	free(api_url);
