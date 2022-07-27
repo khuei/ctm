@@ -35,7 +35,7 @@ main(int argc, char *argv[])
 			}
 		} else if (!strcmp(argv[2], "new")) {
 			if (argv[3][0] != '\0')
-				exit_code = create_rand_addr(&head, argv[4]);
+				exit_code = create_rand_addr(&head, argv[3]);
 			else
 				exit_code = create_rand_addr(&head, "1");
 		} else if (!strcmp(argv[2], "delete")) {

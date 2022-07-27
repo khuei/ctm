@@ -548,8 +548,8 @@ is_number(const char number[])
 
 	for (; number[i] != 0; i++) {
 		if (!isdigit(number[i]))
-			return -1;
+			return false;
 	}
 
-	return 0;
+	return true;
 }
