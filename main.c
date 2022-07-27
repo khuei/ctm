@@ -31,7 +31,7 @@ main(int argc, char *argv[])
 				create_addr(&head, argv[3]);
 			} else {
 				fprintf(stderr, "Error: no email adddress is provided\n");
-				return -1;
+				exit_code = -1;
 			}
 		} else if (!strcmp(argv[2], "new")) {
 			if (argv[3][0] != '\0')
@@ -43,14 +43,14 @@ main(int argc, char *argv[])
 				exit_code = delete_addr(&head, argv[3]);
 			} else {
 				fprintf(stderr, "Error: empty input\n");
-				return -1;
+				exit_code = -1;
 			}
 		} else if (!strcmp(argv[2], "select")) {
 			if (argv[3][0] != '\0') {
 				exit_code = select_addr(&head, argv[3]);
 			} else {
 				fprintf(stderr, "Error: empty input\n");
-				return -1;
+				exit_code = -1;
 			}
 		} else if (!strcmp(argv[2], "list")) {
 			Address *current = head;
@@ -70,11 +70,11 @@ main(int argc, char *argv[])
 				printf("%s\n", parse_current_addr());
 			} else {
 				fprintf(stderr, "Error: unable to get current email address\n");
-				return -1;
+				exit_code = -1;
 			}
 		} else {
 			fprintf(stderr, "Error: invalid argument\n");
-			return -1;
+			exit_code = -1;
 		}
 
 		exit_code = store_addr(&head);
@@ -115,7 +115,7 @@ main(int argc, char *argv[])
 
 		if (!is_number) {
 			fprintf(stderr, "Error: input is not a number\n");
-			return -1;
+			exit_code = -1;
 		}
 
 		for (int i = 1; mailbox != NULL; mailbox = mailbox->next) {
@@ -128,7 +128,7 @@ main(int argc, char *argv[])
 
 		if (!is_existed) {
 			fprintf(stderr, "Error: invalid message number\n");
-			return -1;
+			exit_code = -1;
 		}
 
 		Message *msg = parse_message((char *)selected_id);
@@ -163,7 +163,7 @@ main(int argc, char *argv[])
 
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
-		return -1;
+		exit_code = -1;
 	}
 
 	return exit_code;
