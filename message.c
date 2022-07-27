@@ -86,6 +86,12 @@ parse_message(char *id)
 		sprintf(api_url, "%s%s&domain=%s&id=%s", base_url, name, domain, id);
 
 		parsed_json message_json = get_parsed_json(api_url);
+
+		if (message_json.len == 0) {
+			fprintf(stderr, "Error: failed to connect to 1secMail API\n");
+			return NULL;
+		}
+
 		root = json_tokener_parse(message_json.ptr);
 
 		if (root != NULL) {
@@ -139,7 +145,8 @@ parse_message(char *id)
 		chdir(log_dir);
 
 		if (stat(filename, &st) == 0)
-			get_parsed_json(attm_url);
+			if(get_parsed_json(attm_url).len == 0)
+				break;
 
 		filetype = get_filetype(filename);
 		chdir(current_dir);

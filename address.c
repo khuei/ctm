@@ -37,6 +37,11 @@ create_addr(Address **head, char *addr)
 		                   "postmaster", "hostmaster", "admin" };
 	char **avail_domains = get_domains();
 
+	if (avail_domains == NULL) {
+		fprintf(stderr, "Error: failed to get available domains from 1secMail API\n");
+		return -1;
+	}
+
 	bool good_addr = true;
 	bool good_domain = false;
 
@@ -118,6 +123,11 @@ create_rand_addr(Address **head, const char *input)
 	sprintf(api_url, "%s%s", base_url, input);
 
 	parsed_json emails_json = get_parsed_json(api_url);
+
+	if (emails_json.len == 0) {
+		fprintf(stderr, "Error: failed to connect to 1secMail API\n");
+		return -1;
+	}
 
 	array = json_tokener_parse(emails_json.ptr);
 	array_len = (int)json_object_array_length(array);
@@ -501,6 +511,11 @@ get_domains(void)
 
 	parsed_json domains_json =
 		get_parsed_json("https://www.1secmail.com/api/v1/?action=getDomainList");
+
+	if (domains_json.len == 0) {
+		fprintf(stderr, "Error: failed to connect to 1secMail API\n");
+		return NULL;
+	}
 
 	array = json_tokener_parse(domains_json.ptr);
 	array_len = (int)json_object_array_length(array);

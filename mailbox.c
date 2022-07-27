@@ -50,6 +50,12 @@ retrieve_mailbox(void)
 	sprintf(api_url, "%s%s&domain=%s", base_url, name, domain);
 
 	parsed_json mailbox_json = get_parsed_json(api_url);
+
+	if (mailbox_json.len == 0) {
+		fprintf(stderr, "Error: failed to connect to 1secMail API\n");
+		return -1;
+	}
+
 	json_object *array = json_tokener_parse(mailbox_json.ptr);
 	int array_len = (int)json_object_array_length(array);
 
