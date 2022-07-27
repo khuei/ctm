@@ -91,10 +91,10 @@ create_addr(Address **head, char *addr)
 	}
 
 	if (is_good) {
-		if(!append(head, addr))
+		if(append(head, addr))
 			return -1;
 
-		if(!write_current_addr(addr))
+		if(write_current_addr(addr))
 			return -1;
 	}
 
