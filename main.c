@@ -154,7 +154,6 @@ main(int argc, char *argv[])
 		puts("    current -- display current email address");
 		puts("    select  -- select email address");
 		puts("    delete  -- delete email address");
-		puts("    refresh -- reload mailbox");
 		puts("");
 		puts("Email Commands:");
 		puts("    refresh -- reload mailbox");
