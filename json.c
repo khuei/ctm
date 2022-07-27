@@ -7,7 +7,6 @@
 
 #include "json.h"
 
-static void init_json_struct(parsed_json *);
 static size_t write_json_struct(void *, size_t, size_t, parsed_json *);
 
 parsed_json
@@ -15,7 +14,9 @@ get_parsed_json(const char *url)
 {
 	parsed_json s;
 
-	init_json_struct(&s);
+	s.len = 0;
+	s.ptr = (char *)malloc(s.len + 1);
+	s.ptr[0] = '\0';
 
 	CURL *handle = curl_easy_init();
 
@@ -26,14 +27,6 @@ get_parsed_json(const char *url)
 	curl_easy_cleanup(handle);
 
 	return s;
-}
-
-void
-init_json_struct(parsed_json *s)
-{
-	s->len = 0;
-	s->ptr = (char *)malloc(s->len + 1);
-	s->ptr[0] = '\0';
 }
 
 size_t
