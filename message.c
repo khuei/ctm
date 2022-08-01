@@ -115,92 +115,17 @@ parse_message(char *id)
 	msg->date = json_object_get_string(json_object_object_get(root, "date"));
 	msg->body = json_object_get_string(json_object_object_get(root, "textBody"));
 
-	char *base_attm_url = "https://www.1secmail.com/api/v1/?action=download&login=";
-	char *attm_url = NULL;
 	json_object *attachments = json_object_object_get(root, "attachments");
 	json_object *attachment = NULL;
-	char *filename = NULL;
-	char *filetype = NULL;
 	int array_len = (int)json_object_array_length(attachments);
 
 	for (int i = 0; i < array_len; ++i) {
 		attachment = json_object_array_get_idx(attachments, i);
-
-		filename = realloc(filename, sizeof(char) * strlen(json_object_get_string(json_object_object_get(attachment, "filename"))));
-		filename = (char *)json_object_get_string(json_object_object_get(attachment, "filename"));
-
-		attm_url = (char *)malloc(sizeof(char) * 
-		                          (strlen(base_attm_url) + strlen(name) +
-		                          strlen("&domain=") + strlen(domain) +
-		                          strlen("&id=") + strlen(id) +
-		                          strlen("&file=") +
-		                          strlen(filename)));
-
-		sprintf(attm_url, "%s%s&domain=%s&id=%s&file=%s",
-		        base_attm_url, name, domain, id, filename);
-
-		char current_dir[4096];
-		getcwd(current_dir, sizeof(current_dir));
-
-		chdir(log_dir);
-
-		if (stat(filename, &st) == 0)
-			if(get_parsed_json(attm_url).len == 0)
-				break;
-
-		filetype = get_filetype(filename);
-		chdir(current_dir);
-
-		if(strcmp(filetype, "cannot")) {
-			msg->attachments[i] = (char *)malloc(sizeof(char) *
-			                                     (strlen(filename) +
-			                                     strlen(filetype) + strlen(" []")));
-
-			sprintf(msg->attachments[i], "%s [%s]", filename, filetype);
-		} else {
-			msg->attachments[i] = (char *)malloc(sizeof(char) *
-			                                     strlen(filename));
-			sprintf(msg->attachments[i], "%s", filename);
-		}
-
-		free(filename);
-		free(filetype);
+		msg->attachments[i] = (char *)json_object_get_string(json_object_object_get(attachment, "filename"));
 	}
 	msg->attachments[array_len] = NULL;
 
 	free(conf_dir);
-	free(attm_url);
 
 	return msg;
-}
-
-char *get_filetype(const char *filename) {
-	FILE *pf = NULL;
-	char *command = NULL;
-	char *output = NULL;
-	char data[2048];
-
-	command = (char *)malloc(sizeof(char) * (strlen("file --mimetype ") +
-	                         strlen(filename) + strlen(" | cut -d ' ' -f1")));
-
-	sprintf(command, "file --mimetype %s | cut -d ' ' -f2", filename);
-
-	pf = popen(command, "r");
-	free(command);
-
-	if (pf != NULL) {
-		fgets(data, 2048, pf);
-
-		for (int i = 0; i < strlen(data); ++i)
-			if (data[i] == ' ' && data[i + 1] == ' ')
-				data[i] = '\0';
-
-		output = (char *)malloc(sizeof(char) * strlen(data));
-
-		strcpy(output, data);
-
-		pclose(pf);
-	}
-
-	return output;
 }
