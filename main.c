@@ -140,7 +140,7 @@ main(int argc, char *argv[])
 		if (msg->attachments[0] != NULL) {
 			puts("\nAttachments: ");
 			for (int i = 0; msg->attachments[i] != NULL; ++i)
-				printf("[%d] %s\n", i, msg->attachments[i]);
+				printf("[%d] %s\n", i+1, msg->attachments[i]);
 		}
 
 		free(msg);
