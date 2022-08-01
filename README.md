@@ -4,10 +4,12 @@
 
 ## Features
 
-- Generate random temporary email addresses
-- Create a custom temporary email address
-- Manage multiple temporary email addresses
-- Receive email in plain text
+- [x] Generate random temporary email addresses
+- [x] Create a custom temporary email address
+- [x] Manage multiple temporary email addresses
+- [x] Read email in plain text
+- [ ] Read email in rendered HTML
+- [ ] Download and view attachments
 
 ## OS Support
 
