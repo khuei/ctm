@@ -1,0 +1,57 @@
+#compdef ctm
+
+(( $+functions[_ctm_commands] )) ||
+_ctm_commmands() {
+	local -a _ctm_commands _ctm_addr_commands
+	_ctm_commands=(
+		'addr:managing email addresses'
+		'refresh:reload mailbox'
+		'list:show all messages in mailbox'
+		'view:display specified message'
+		'version:display version information'
+		'help:show help message'
+	)
+
+	_ctm_addr_commands=(
+		'create:create a custom email address'
+		'new:create a random email address'
+		'current:display current email address'
+		'select:set an email address as current'
+		'delete:remove an email address'
+	)
+
+	if (( CURRENT == 1 )); then
+		_describe "command" _ctm_commands || compadd "$@"
+	elif ((CURRENT == 2)); then
+		cmd="${${_ctm_commands[(r)$words[1]:*]%%:*}}"
+		if (( $#cmd )); then
+			if [[ $cmd == "addr" ]]; then
+				_describe "address command" _ctm_addr_commands || compadd "$@"
+			else
+				_message "no more options"
+			fi
+		else
+			_message "no more options"
+		fi
+	else
+		cmd="${${_ctm_addr_commands[(r)$words[2]:*]%%:*}}"
+		if (( $#cmd )); then
+			if [[ $cmd == "create" ]]; then
+				_message 'input an email address'
+			elif [[ $cmd == "new" ]]; then
+				_message 'input a number'
+			elif [[ $cmd == "select" ]]; then
+				_message 'input a number or an email address'
+			elif [[ $cmd == "delete" ]]; then
+				_message 'input a number or an email address'
+			else
+				_message "no more options"
+			fi
+		else
+			_message "no more options"
+		fi
+	fi
+}
+
+_arguments -s \
+	'*::ctm command:_ctm_commmands'
