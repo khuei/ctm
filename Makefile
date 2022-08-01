@@ -32,10 +32,13 @@ clean:
 
 install: ctm
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	mkdir -p $(DESTDIR)$(MANPREFIX)/man1
 	cp -f ctm $(DESTDIR)$(PREFIX)/bin
+	cp -f ctm.1 $(DESDIR)$(MANPREFIX)/man1/ctm.1
 	chmod 775 $(DESTDIR)$(PREFIX)/bin/ctm
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/ctm
+	rm -f $(DESKDIR)$(MANPREFIX)/man1/ctm.1
 
 .PHONY: all options ctm clean install uninstall
