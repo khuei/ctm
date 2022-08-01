@@ -149,16 +149,19 @@ main(int argc, char *argv[])
 		puts("       ctm [command]");
 		puts("");
 		puts("Managing Email Address Commands:");
-		puts("    create  -- create email address");
-		puts("    new     -- create a new email address");
+		puts("    create  -- create a custom email address");
+		puts("    new     -- create a random email address");
 		puts("    current -- display current email address");
-		puts("    select  -- select email address");
-		puts("    delete  -- delete email address");
+		puts("    select  -- set an email address as current");
+		puts("    delete  -- remove an email address");
 		puts("");
 		puts("Email Commands:");
 		puts("    refresh -- reload mailbox");
 		puts("    list    -- show all messages in mailbox");
 		puts("    view    -- display specified message");
+		puts("");
+		puts("Other Commands:");
+		puts("    version -- display version information");
 	} else if (!strcmp(argv[1], "version")) {
 		puts("ctm-0.1");
 	} else {
