@@ -159,7 +159,8 @@ main(int argc, char *argv[])
 		puts("    refresh -- reload mailbox");
 		puts("    list    -- show all messages in mailbox");
 		puts("    view    -- display specified message");
-
+	} else if (!strcmp(argv[1], "version")) {
+		puts("ctm-0.1");
 	} else {
 		fprintf(stderr, "Error: invalid argument\n");
 		exit_code = -1;
