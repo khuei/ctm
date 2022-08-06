@@ -8,7 +8,7 @@
 - [x] Create a custom temporary email address
 - [x] Manage multiple temporary email addresses
 - [x] Read email in plain text
-- [ ] Read email in rendered HTML
+- [x] Read email in rendered HTML
 - [ ] Download and view attachments
 
 ## OS Support
@@ -52,6 +52,7 @@ help -- display help message
 
 - curl
 - json-c
+- lexbor
 
 ## Installation
 

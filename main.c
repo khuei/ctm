@@ -6,10 +6,14 @@
 #include <sys/stat.h>
 
 #include <curl/curl.h>
+#include "lexbor/html/html.h"
+#include "lexbor/dom/dom.h"
 
 #include "address.h"
 #include "mailbox.h"
 #include "message.h"
+
+lexbor_action_t simple_walker(lxb_dom_node_t *node, void *ctx);
 
 int
 main(int argc, char *argv[])
@@ -133,9 +137,27 @@ main(int argc, char *argv[])
 
 		Message *msg = parse_message((char *)selected_id);
 
-		printf("From: %s\nDate: %s\nSubject: %s\n\n%s",
-		       msg->from, msg->date, msg->subject,
-		       msg->body);
+		lxb_status_t status;
+		lxb_html_document_t *doc = NULL;
+
+		doc = lxb_html_document_create();
+		if (doc == NULL) {
+			fprintf(stderr, "Error: fail to create html document for parsing\n");
+			free(msg);
+			return -1;
+		}
+
+		status = lxb_html_document_parse(doc, (lxb_char_t *)msg->body, strlen(msg->body));
+		if (status != LXB_STATUS_OK) {
+			fprintf(stderr, "Error: failed to parse HTML\n");
+			free(msg);
+			return -1;
+		}
+
+		printf("From: %s\nDate: %s\nSubject: %s",
+		       msg->from, msg->date, msg->subject);
+
+		lxb_dom_node_simple_walk(lxb_dom_interface_node(doc), simple_walker, NULL);
 
 		if (msg->attachments[0] != NULL) {
 			puts("\nAttachments: ");
@@ -144,6 +166,7 @@ main(int argc, char *argv[])
 		}
 
 		free(msg);
+		lxb_html_document_destroy(doc);
 	} else if (!strcmp(argv[1], "help")) {
 		puts("Usage: ctm addr [command]");
 		puts("       ctm [command]");
@@ -170,4 +193,32 @@ main(int argc, char *argv[])
 	}
 
 	return exit_code;
+}
+
+lexbor_action_t
+simple_walker(lxb_dom_node_t *node, void *ctx)
+{
+	lexbor_str_t *str;
+
+	switch (lxb_dom_node_tag_id(node)) {
+	case LXB_TAG__TEXT:
+		str = &lxb_dom_interface_text(node)->char_data.data;
+		printf("%.*s", (int) str->length, (char *) str->data);
+		break;
+
+	case LXB_TAG_BR:
+		printf("\n");
+		break;
+	case LXB_TAG_DIV:
+		printf("\n");
+		break;
+	case LXB_TAG__EM_COMMENT:
+	case LXB_TAG_SCRIPT:
+	case LXB_TAG_STYLE:
+		return LEXBOR_ACTION_NEXT;
+	default:
+		break;
+	}
+
+	return LEXBOR_ACTION_OK;
 }

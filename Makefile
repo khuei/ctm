@@ -7,7 +7,7 @@ MANPREFIX = $(PREFIX)/share/man
 PKG_CONFIG = pkg-config
 
 BCFLAGS = $(CFLAGS)
-BLDFLAGS = `$(PKG_CONFIG) --cflags --libs json-c libcurl` -lm
+BLDFLAGS = `$(PKG_CONFIG) --cflags --libs json-c libcurl` -llexbor -lm
 
 SRC_DIR = $(shell pwd)
 SRCS = $(wildcard *.c)
