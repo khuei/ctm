@@ -113,7 +113,14 @@ parse_message(char *id)
 	msg->from = json_object_get_string(json_object_object_get(root, "from"));
 	msg->subject = json_object_get_string(json_object_object_get(root, "subject"));
 	msg->date = json_object_get_string(json_object_object_get(root, "date"));
-	msg->body = json_object_get_string(json_object_object_get(root, "textBody"));
+
+	const char *textBody = json_object_get_string(json_object_object_get(root, "textBody"));
+	const char *htmlBody = json_object_get_string(json_object_object_get(root, "htmlBody"));
+
+	if (htmlBody != NULL && htmlBody[0] != '\0')
+		msg->body = htmlBody;
+	else
+		msg->body = textBody;
 
 	json_object *attachments = json_object_object_get(root, "attachments");
 	json_object *attachment = NULL;
