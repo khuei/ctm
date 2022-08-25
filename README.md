@@ -38,7 +38,7 @@ Usage: ctm [command]
 
 refresh -- reload mailbox
 list    -- show all messages in mailbox
-view    -- display specified message
+read    -- display specified message
 ```
 
 ### Other Command

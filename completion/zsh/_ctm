@@ -7,7 +7,7 @@ _ctm_commmands() {
 		'addr:managing email addresses'
 		'refresh:reload mailbox'
 		'list:show all messages in mailbox'
-		'view:display specified message'
+		'read:display specified message'
 		'version:display version information'
 		'help:show help message'
 	)

@@ -106,7 +106,7 @@ main(int argc, char *argv[])
 		}
 
 		free(mailbox);
-	} else if (!strcmp(argv[1], "view")) {
+	} else if (!strcmp(argv[1], "read")) {
 		bool is_number = true;
 		bool is_existed = false;
 		const char *selected_id;
@@ -181,7 +181,7 @@ main(int argc, char *argv[])
 		puts("Email Commands:");
 		puts("    refresh -- reload mailbox");
 		puts("    list    -- show all messages in mailbox");
-		puts("    view    -- display specified message");
+		puts("    read    -- display specified message");
 		puts("");
 		puts("Other Commands:");
 		puts("    version -- display version information");
