@@ -14,8 +14,8 @@
 ## OS Support
 
 - [x] Linux
-- [ ] MacOS
-- [ ] Windows
+- [ ] MacOS (not yet tested)
+- [ ] Windows (not yet tested)
 
 ## Usage
 
